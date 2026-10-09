@@ -4,10 +4,13 @@ import React, { useState, useMemo, useEffect } from 'react';
 import VoxelCanvas3D from './VoxelCanvas3D';
 import LayerCanvas2D from './LayerCanvas2D';
 import { generateVoxels, ShapeConfig, ShapeType } from '@/lib/voxelEngine';
-import { Layers, Settings, Share2, Printer, RotateCcw, Check, X, ChevronRight, Sparkles } from 'lucide-react';
-import Link from 'next/link';
+import { useTheme } from '@/context/ThemeContext';
+import { Layers, Settings, Share2, Printer, RotateCcw, Check, X, ChevronRight } from 'lucide-react';
 
 export default function MinecraftShapeGenerator() {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
+
   // Shape configuration
   const [shape, setShape] = useState<ShapeType>('dome');
   const [diameter, setDiameter] = useState<number>(30);
@@ -42,7 +45,7 @@ export default function MinecraftShapeGenerator() {
       diameterX: diameter,
       diameterZ: diameter,
       height,
-      thickness: 1, // standard hollow shell
+      thickness: 1,
       smoothCurve,
       geodesic,
       symmetryLines: showSymmetry,
@@ -69,7 +72,6 @@ export default function MinecraftShapeGenerator() {
 
   const model = useMemo(() => generateVoxels(config), [config]);
 
-  // Adjust current layer if height changes
   useEffect(() => {
     if (currentLayer >= model.height) {
       setCurrentLayer(Math.max(0, model.height - 1));
@@ -107,20 +109,28 @@ export default function MinecraftShapeGenerator() {
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
       {/* Top Title Banner */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-[#2d3540]">
+      <div
+        className={`flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b transition-colors ${
+          isDark ? 'border-[#2d3540]' : 'border-stone-200'
+        }`}
+      >
         <div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
-            <span className="text-emerald-400">❖</span> Minecraft Shape Generator
+          <h1
+            className={`text-2xl sm:text-3xl font-extrabold tracking-tight flex items-center gap-2.5 ${
+              isDark ? 'text-white' : 'text-slate-900'
+            }`}
+          >
+            <span className="text-emerald-500">❖</span> Minecraft Shape Generator
           </h1>
-          <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-            Build perfect hollow domes, spheres, and roofs with 3D orbit inspection and 2D layer slicer.
+          <p className={`text-xs sm:text-sm mt-1 ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
+            Build perfect hollow domes, spheres, and roofs with 3D orbit inspection and 2D movable layer slicer.
           </p>
         </div>
 
         <div className="flex items-center gap-3">
           <button
             onClick={() => setShowExportModal(true)}
-            className="mc-button-green px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-sm flex items-center gap-2"
+            className="mc-button-green px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-sm flex items-center gap-2 shadow-sm"
           >
             <Share2 className="w-3.5 h-3.5" /> Export Blueprint
           </button>
@@ -160,15 +170,29 @@ export default function MinecraftShapeGenerator() {
         </div>
 
         {/* SIDEBAR CONTROLS */}
-        <div className="lg:col-span-4 w-full bg-[#181d24] rounded-xl border border-[#2d3540] overflow-hidden flex flex-col shadow-xl">
+        <div
+          className={`lg:col-span-4 w-full rounded-xl border overflow-hidden flex flex-col transition-colors ${
+            isDark
+              ? 'bg-[#181d24] border-[#2d3540] shadow-xl'
+              : 'bg-white border-stone-200 shadow-md'
+          }`}
+        >
           {/* TAB HEADER */}
-          <div className="grid grid-cols-2 border-b border-[#2d3540] bg-[#14181d] p-1.5 gap-1.5">
+          <div
+            className={`grid grid-cols-2 border-b p-1.5 gap-1.5 transition-colors ${
+              isDark ? 'border-[#2d3540] bg-[#14181d]' : 'border-stone-200 bg-stone-100'
+            }`}
+          >
             <button
               onClick={() => setActiveTab('shape')}
               className={`py-2 px-3 rounded-xs text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'shape'
-                  ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
-                  : 'text-zinc-400 hover:text-white'
+                  ? isDark
+                    ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
+                    : 'bg-white text-emerald-600 border-t-2 border-emerald-500 shadow-xs'
+                  : isDark
+                  ? 'text-zinc-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Settings className="w-3.5 h-3.5" /> Shape Config
@@ -177,8 +201,12 @@ export default function MinecraftShapeGenerator() {
               onClick={() => setActiveTab('layers')}
               className={`py-2 px-3 rounded-xs text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'layers'
-                  ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
-                  : 'text-zinc-400 hover:text-white'
+                  ? isDark
+                    ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
+                    : 'bg-white text-emerald-600 border-t-2 border-emerald-500 shadow-xs'
+                  : isDark
+                  ? 'text-zinc-400 hover:text-white'
+                  : 'text-slate-600 hover:text-slate-900'
               }`}
             >
               <Layers className="w-3.5 h-3.5" /> Layer Tracker
@@ -192,7 +220,7 @@ export default function MinecraftShapeGenerator() {
               <div className="space-y-6">
                 {/* Shape Selection */}
                 <div className="space-y-3">
-                  <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                  <div className={`text-[11px] font-bold uppercase tracking-wider ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
                     Base Primitive
                   </div>
 
@@ -201,55 +229,67 @@ export default function MinecraftShapeGenerator() {
                       onClick={() => setShape('dome')}
                       className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
                         shape === 'dome'
-                          ? 'bg-[#202934] border-emerald-500 text-emerald-300'
-                          : 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          ? isDark
+                            ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                            : 'bg-emerald-50 border-emerald-500 text-emerald-800'
+                          : isDark
+                          ? 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
                       }`}
                     >
                       <span>Dome (rounded)</span>
-                      {shape === 'dome' && <Check className="w-4 h-4 text-emerald-400" />}
+                      {shape === 'dome' && <Check className="w-4 h-4 text-emerald-500" />}
                     </button>
 
                     <button
                       onClick={() => setShape('cone')}
                       className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
                         shape === 'cone'
-                          ? 'bg-[#202934] border-emerald-500 text-emerald-300'
-                          : 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          ? isDark
+                            ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                            : 'bg-emerald-50 border-emerald-500 text-emerald-800'
+                          : isDark
+                          ? 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
                       }`}
                     >
                       <span>Cone (tapered)</span>
-                      {shape === 'cone' && <Check className="w-4 h-4 text-emerald-400" />}
+                      {shape === 'cone' && <Check className="w-4 h-4 text-emerald-500" />}
                     </button>
                   </div>
                 </div>
 
                 {/* Additional Options */}
-                <div className="space-y-3 pt-2 border-t border-[#262e38]">
-                  <label className="flex items-start gap-2.5 text-xs text-zinc-300 cursor-pointer">
+                <div className={`space-y-3 pt-2 border-t ${isDark ? 'border-[#262e38]' : 'border-stone-200'}`}>
+                  <label className="flex items-start gap-2.5 text-xs cursor-pointer">
                     <input
                       type="checkbox"
                       checked={smoothCurve}
                       onChange={(e) => setSmoothCurve(e.target.checked)}
-                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] mt-0.5 rounded-xs"
+                      className="w-4 h-4 text-emerald-500 mt-0.5 rounded-xs"
                     />
                     <div>
-                      <div className="font-bold text-white">Smooth Curve (half slabs)</div>
-                      <div className="text-[11px] text-zinc-400">
+                      <div className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        Smooth Curve (half slabs)
+                      </div>
+                      <div className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
                         Uses lower/upper slabs to soften the outline.
                       </div>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-2.5 text-xs text-zinc-300 cursor-pointer">
+                  <label className="flex items-start gap-2.5 text-xs cursor-pointer">
                     <input
                       type="checkbox"
                       checked={geodesic}
                       onChange={(e) => setGeodesic(e.target.checked)}
-                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] mt-0.5 rounded-xs"
+                      className="w-4 h-4 text-emerald-500 mt-0.5 rounded-xs"
                     />
                     <div>
-                      <div className="font-bold text-white">Geodesic shell</div>
-                      <div className="text-[11px] text-zinc-400">
+                      <div className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                        Geodesic shell
+                      </div>
+                      <div className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
                         Samples the surface with triangular struts.
                       </div>
                     </div>
@@ -257,16 +297,20 @@ export default function MinecraftShapeGenerator() {
                 </div>
 
                 {/* Diameter Slider */}
-                <div className="space-y-2 pt-2 border-t border-[#262e38]">
+                <div className={`space-y-2 pt-2 border-t ${isDark ? 'border-[#262e38]' : 'border-stone-200'}`}>
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-zinc-200">Diameter: {diameter}</span>
+                    <span className={`font-bold ${isDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+                      Diameter: {diameter}
+                    </span>
                     <input
                       type="number"
                       min={3}
                       max={maxSliderValue}
                       value={diameter}
                       onChange={(e) => setDiameter(Math.max(3, Math.min(maxSliderValue, Number(e.target.value) || 3)))}
-                      className="w-14 px-2 py-1 text-center font-mono text-xs bg-[#111418] text-emerald-400 border border-[#3b4450] rounded-xs"
+                      className={`w-14 px-2 py-1 text-center font-mono text-xs border rounded-xs ${
+                        isDark ? 'bg-[#111418] text-emerald-400 border-[#3b4450]' : 'bg-white text-emerald-700 border-stone-300'
+                      }`}
                     />
                   </div>
                   <input
@@ -282,14 +326,18 @@ export default function MinecraftShapeGenerator() {
                 {/* Height Slider */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-zinc-200">Height: {height}</span>
+                    <span className={`font-bold ${isDark ? 'text-zinc-200' : 'text-slate-800'}`}>
+                      Height: {height}
+                    </span>
                     <input
                       type="number"
                       min={2}
                       max={maxSliderValue}
                       value={height}
                       onChange={(e) => setHeight(Math.max(2, Math.min(maxSliderValue, Number(e.target.value) || 2)))}
-                      className="w-14 px-2 py-1 text-center font-mono text-xs bg-[#111418] text-emerald-400 border border-[#3b4450] rounded-xs"
+                      className={`w-14 px-2 py-1 text-center font-mono text-xs border rounded-xs ${
+                        isDark ? 'bg-[#111418] text-emerald-400 border-[#3b4450]' : 'bg-white text-emerald-700 border-stone-300'
+                      }`}
                     />
                   </div>
                   <input
@@ -302,38 +350,46 @@ export default function MinecraftShapeGenerator() {
                   />
                 </div>
 
-                {/* Large Size Warning Box */}
-                <div className="p-3 rounded-sm bg-[#221c15] border border-[#78350f] space-y-1">
-                  <label className="flex items-start gap-2 text-xs text-[#fde047] font-semibold cursor-pointer">
+                {/* Warning Box */}
+                <div
+                  className={`p-3 rounded-sm border space-y-1 ${
+                    isDark ? 'bg-[#221c15] border-[#78350f]' : 'bg-amber-50 border-amber-200'
+                  }`}
+                >
+                  <label className={`flex items-start gap-2 text-xs font-semibold cursor-pointer ${isDark ? 'text-[#fde047]' : 'text-amber-800'}`}>
                     <input
                       type="checkbox"
                       checked={allowLargeSizes}
                       onChange={(e) => setAllowLargeSizes(e.target.checked)}
-                      className="w-4 h-4 text-amber-500 bg-[#111418] border-amber-600 mt-0.5 rounded-xs"
+                      className="w-4 h-4 text-amber-500 mt-0.5 rounded-xs"
                     />
                     <span>Allow sizes above 64 blocks</span>
                   </label>
-                  <p className="text-[11px] text-amber-200/80 pl-6">
+                  <p className={`text-[11px] pl-6 ${isDark ? 'text-amber-200/80' : 'text-amber-700'}`}>
                     Structures &gt; 64 blocks contain thousands of voxels.
                   </p>
                 </div>
 
                 {/* Symmetry Lines Section */}
-                <div className="p-3.5 rounded-sm bg-[#14181d] border border-[#2d3540] space-y-3">
-                  <label className="flex items-center gap-2 text-xs font-bold text-white cursor-pointer">
+                <div
+                  className={`p-3.5 rounded-sm border space-y-3 ${
+                    isDark ? 'bg-[#14181d] border-[#2d3540]' : 'bg-stone-50 border-stone-200'
+                  }`}
+                >
+                  <label className={`flex items-center gap-2 text-xs font-bold cursor-pointer ${isDark ? 'text-white' : 'text-slate-900'}`}>
                     <input
                       type="checkbox"
                       checked={showSymmetry}
                       onChange={(e) => setShowSymmetry(e.target.checked)}
-                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] rounded-xs"
+                      className="w-4 h-4 text-emerald-500 rounded-xs"
                     />
                     <span>Show Symmetrical Lines (Ribs)</span>
                   </label>
 
                   {showSymmetry && (
-                    <div className="space-y-3 pt-2 border-t border-[#262e38]">
+                    <div className={`space-y-3 pt-2 border-t ${isDark ? 'border-[#262e38]' : 'border-stone-200'}`}>
                       <div className="space-y-1">
-                        <div className="flex justify-between text-xs text-zinc-300">
+                        <div className={`flex justify-between text-xs ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
                           <span>Line Count: {lineCount}</span>
                         </div>
                         <input
@@ -347,7 +403,7 @@ export default function MinecraftShapeGenerator() {
                       </div>
 
                       <div className="space-y-1">
-                        <div className="flex justify-between text-xs text-zinc-300">
+                        <div className={`flex justify-between text-xs ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
                           <span>Line Width: {lineWidthDeg}°</span>
                         </div>
                         <input
@@ -361,7 +417,7 @@ export default function MinecraftShapeGenerator() {
                       </div>
 
                       <div className="space-y-1">
-                        <div className="flex justify-between text-xs text-zinc-300">
+                        <div className={`flex justify-between text-xs ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
                           <span>Layer Spacing: {layerSpacing}</span>
                         </div>
                         <input
@@ -375,7 +431,7 @@ export default function MinecraftShapeGenerator() {
                       </div>
 
                       <div className="space-y-1">
-                        <div className="flex justify-between text-xs text-zinc-300">
+                        <div className={`flex justify-between text-xs ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
                           <span>Rotation: {rotationDeg}°</span>
                         </div>
                         <input
@@ -419,14 +475,14 @@ export default function MinecraftShapeGenerator() {
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs pt-1 text-zinc-400">
+                  <div className={`flex items-center justify-between text-xs pt-1 ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
                     <button
                       onClick={handleResetLayers}
-                      className="hover:text-white flex items-center gap-1 font-medium transition"
+                      className="hover:underline flex items-center gap-1 font-medium transition"
                     >
                       <RotateCcw className="w-3 h-3" /> Reset Tracker
                     </button>
-                    <span className="font-mono font-bold text-emerald-400">
+                    <span className="font-mono font-bold text-emerald-500">
                       Layer {currentLayer + 1} / {model.height}
                     </span>
                   </div>
@@ -434,8 +490,14 @@ export default function MinecraftShapeGenerator() {
 
                 {/* Built Layers Grid */}
                 <div className="space-y-2">
-                  <div className="text-xs font-bold text-zinc-300">Built Layers:</div>
-                  <div className="grid grid-cols-3 gap-1.5 max-h-40 overflow-y-auto p-2 bg-[#111418] rounded-sm border border-[#2d3540]">
+                  <div className={`text-xs font-bold ${isDark ? 'text-zinc-300' : 'text-slate-800'}`}>
+                    Built Layers:
+                  </div>
+                  <div
+                    className={`grid grid-cols-3 gap-1.5 max-h-40 overflow-y-auto p-2 rounded-sm border ${
+                      isDark ? 'bg-[#111418] border-[#2d3540]' : 'bg-stone-50 border-stone-200'
+                    }`}
+                  >
                     {Array.from({ length: model.height }, (_, i) => (
                       <button
                         key={i}
@@ -448,7 +510,9 @@ export default function MinecraftShapeGenerator() {
                             ? 'bg-[#064e3b] border-emerald-500 text-emerald-300'
                             : i === currentLayer
                             ? 'bg-[#0369a1] border-sky-400 text-white'
-                            : 'bg-[#181d24] border-[#2d3540] text-zinc-400 hover:bg-[#202730]'
+                            : isDark
+                            ? 'bg-[#181d24] border-[#2d3540] text-zinc-400 hover:bg-[#202730]'
+                            : 'bg-white border-stone-300 text-slate-700 hover:bg-stone-100'
                         }`}
                       >
                         <span>{i + 1}</span>
@@ -471,11 +535,21 @@ export default function MinecraftShapeGenerator() {
                 </div>
 
                 {/* Layers & View Sub-Card */}
-                <div className="p-3.5 rounded-sm bg-[#14181d] border border-[#2d3540] space-y-3">
-                  <div className="text-xs font-bold text-zinc-300">View Settings</div>
+                <div
+                  className={`p-3.5 rounded-sm border space-y-3 ${
+                    isDark ? 'bg-[#14181d] border-[#2d3540]' : 'bg-stone-50 border-stone-200'
+                  }`}
+                >
+                  <div className={`text-xs font-bold ${isDark ? 'text-zinc-300' : 'text-slate-800'}`}>
+                    View Settings
+                  </div>
 
                   {/* View Mode */}
-                  <div className="grid grid-cols-3 gap-1 bg-[#111418] p-1 rounded-sm border border-[#2d3540]">
+                  <div
+                    className={`grid grid-cols-3 gap-1 p-1 rounded-sm border ${
+                      isDark ? 'bg-[#111418] border-[#2d3540]' : 'bg-stone-200 border-stone-300'
+                    }`}
+                  >
                     {[
                       { id: '3d', label: '3D' },
                       { id: '2d', label: '2D' },
@@ -487,7 +561,9 @@ export default function MinecraftShapeGenerator() {
                         className={`py-1 rounded-xs text-xs font-bold transition ${
                           viewMode === item.id
                             ? 'bg-emerald-600 text-white shadow-xs'
-                            : 'text-zinc-400 hover:text-white'
+                            : isDark
+                            ? 'text-zinc-400 hover:text-white'
+                            : 'text-slate-600 hover:text-slate-900'
                         }`}
                       >
                         {item.label}
@@ -499,7 +575,9 @@ export default function MinecraftShapeGenerator() {
                   <select
                     value={palette}
                     onChange={(e) => setPalette(e.target.value)}
-                    className="w-full px-2.5 py-1.5 bg-[#111418] border border-[#3b4450] rounded-xs text-xs text-zinc-200 font-medium focus:outline-emerald-500"
+                    className={`w-full px-2.5 py-1.5 border rounded-xs text-xs font-medium focus:outline-emerald-500 ${
+                      isDark ? 'bg-[#111418] border-[#3b4450] text-zinc-200' : 'bg-white border-stone-300 text-slate-800'
+                    }`}
                   >
                     <option value="okabeIto">Okabe-Ito (High Contrast)</option>
                     <option value="minecraftWool">Classic Minecraft Wool</option>
@@ -507,25 +585,31 @@ export default function MinecraftShapeGenerator() {
                     <option value="slateBlueprint">Slate Blueprint</option>
                   </select>
 
-                  <label className="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
+                  <label className={`flex items-center gap-2 text-xs cursor-pointer ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
                     <input
                       type="checkbox"
                       checked={showOnionSkin}
                       onChange={(e) => setShowOnionSkin(e.target.checked)}
-                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] rounded-xs"
+                      className="w-4 h-4 text-emerald-500 rounded-xs"
                     />
                     <span>Show Ghost Lower Layer</span>
                   </label>
                 </div>
 
                 {/* Survival Material Summary */}
-                <div className="p-3.5 rounded-sm bg-[#14181d] border border-emerald-900/60 space-y-2 text-xs">
-                  <div className="font-bold text-emerald-400">Survival Block Count:</div>
-                  <div className="grid grid-cols-2 gap-2 text-zinc-300 font-mono">
-                    <div>Total: <span className="font-bold text-white">{totalBlocks}</span></div>
-                    <div>Stacks: <span className="font-bold text-white">{stacks64}s + {remainderBlocks}</span></div>
-                    <div>Shulkers: <span className="font-bold text-white">{shulkerBoxes}</span></div>
-                    <div>This Layer: <span className="font-bold text-white">{model.layers.get(currentLayer)?.length || 0}</span></div>
+                <div
+                  className={`p-3.5 rounded-sm border space-y-2 text-xs ${
+                    isDark ? 'bg-[#14181d] border-emerald-900/60' : 'bg-emerald-50/70 border-emerald-300'
+                  }`}
+                >
+                  <div className={`font-bold ${isDark ? 'text-emerald-400' : 'text-emerald-900'}`}>
+                    Survival Block Count:
+                  </div>
+                  <div className={`grid grid-cols-2 gap-2 font-mono ${isDark ? 'text-zinc-300' : 'text-slate-700'}`}>
+                    <div>Total: <span className="font-bold">{totalBlocks}</span></div>
+                    <div>Stacks: <span className="font-bold">{stacks64}s + {remainderBlocks}</span></div>
+                    <div>Shulkers: <span className="font-bold">{shulkerBoxes}</span></div>
+                    <div>This Layer: <span className="font-bold">{model.layers.get(currentLayer)?.length || 0}</span></div>
                   </div>
                 </div>
               </div>
@@ -537,25 +621,33 @@ export default function MinecraftShapeGenerator() {
       {/* EXPORT MODAL */}
       {showExportModal && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-[#181d24] w-full max-w-xl rounded-sm border border-[#3b4450] shadow-2xl p-6 space-y-5">
-            <div className="flex items-center justify-between border-b border-[#2d3540] pb-3">
-              <h3 className="text-base font-bold text-white flex items-center gap-2">
-                <span className="text-emerald-400">❖</span> Export Blueprint
+          <div
+            className={`w-full max-w-xl rounded-sm border shadow-2xl p-6 space-y-5 ${
+              isDark ? 'bg-[#181d24] border-[#3b4450] text-zinc-300' : 'bg-white border-stone-200 text-slate-800'
+            }`}
+          >
+            <div className={`flex items-center justify-between border-b pb-3 ${isDark ? 'border-[#2d3540]' : 'border-stone-200'}`}>
+              <h3 className={`text-base font-bold flex items-center gap-2 ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                <span className="text-emerald-500">❖</span> Export Blueprint
               </h3>
               <button
                 onClick={() => setShowExportModal(false)}
-                className="p-1 text-zinc-400 hover:text-white"
+                className="p-1 hover:opacity-75"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-zinc-300">
+            <div className="space-y-3 text-xs">
               <p>
                 <strong>Summary:</strong> {shape.toUpperCase()} • {diameter}x{diameter} Diameter • {height} Height • {totalBlocks} Blocks ({stacks64} stacks of 64).
               </p>
 
-              <div className="p-3 bg-[#111418] rounded-xs border border-[#2d3540] font-mono text-[11px] text-emerald-400 max-h-48 overflow-y-auto whitespace-pre">
+              <div
+                className={`p-3 rounded-xs border font-mono text-[11px] max-h-48 overflow-y-auto whitespace-pre ${
+                  isDark ? 'bg-[#111418] border-[#2d3540] text-emerald-400' : 'bg-stone-50 border-stone-200 text-emerald-800'
+                }`}
+              >
 {`# Minecraft Dome Blueprint
 Shape: ${shape}
 Diameter: ${diameter}x${diameter}

@@ -239,7 +239,7 @@ export default function Home() {
               How to Generate a Dome in Minecraft (Survival &amp; Creative)
             </h2>
             <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
-              Building a rounded <strong>minecraft dome roof</strong> or glass biosphere requires converting continuous 3D sphere formulas into discrete 1x1x1 Minecraft voxels. Our online dome generator calculates the exact perimeter shell and slices it into 2D layer blueprints.
+              Building a rounded <strong>minecraft dome roof</strong>, observatory cap, or glass biosphere requires converting continuous 3D sphere mathematical formulas into discrete 1x1x1 Minecraft voxels. Our free online <strong>minecraft half sphere generator</strong> calculates the exact perimeter shell and slices it into 2D layer blueprints.
             </p>
           </div>
 
@@ -283,22 +283,68 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 6. FAQ (TARGETING TOP SEMRUSH QUESTIONS) */}
-      <section className={`py-14 transition-colors ${isDark ? 'bg-[#14181d]' : 'bg-white'}`}>
+      {/* 6. COMPARISON: COMMANDS VS SCHEMATICS VS 2D LAYER BLUEPRINTS */}
+      <section className={`py-14 border-b transition-colors ${isDark ? 'bg-[#14181d] border-[#262e38]' : 'bg-white border-stone-200'}`}>
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
+          <div className="space-y-2">
+            <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+              Minecraft Dome Generator: Bedrock, Java, Commands &amp; Schematics
+            </h2>
+            <p className={`text-xs sm:text-sm leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+              Whether you are building on Minecraft Java Edition, Bedrock (PE/Xbox/PlayStation/Switch), or running creative server commands, here is how each approach compares:
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+            <div className={`p-5 rounded-sm border space-y-2 ${isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-stone-50 border-stone-200'}`}>
+              <span className="text-emerald-500 font-mono text-xs font-bold uppercase tracking-wider">Survival / Bedrock</span>
+              <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                2D Layer Blueprints
+              </h3>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+                Best for 100% vanilla survival worlds on both Java &amp; Bedrock. No cheats or external mods required. Use our step-by-step slicer on a mobile phone or second screen.
+              </p>
+            </div>
+
+            <div className={`p-5 rounded-sm border space-y-2 ${isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-stone-50 border-stone-200'}`}>
+              <span className="text-emerald-500 font-mono text-xs font-bold uppercase tracking-wider">Creative / Server</span>
+              <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Minecraft Dome Generator Command
+              </h3>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+                In Creative mode with WorldEdit or FastAsyncWorldEdit installed, you can generate instant domes using <code className="text-emerald-400 font-mono">//hsphere glass 15 0,15,0</code> to spawn a hollow half sphere without placing individual blocks.
+              </p>
+            </div>
+
+            <div className={`p-5 rounded-sm border space-y-2 ${isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-stone-50 border-stone-200'}`}>
+              <span className="text-emerald-500 font-mono text-xs font-bold uppercase tracking-wider">Schematic / Litematica</span>
+              <h3 className={`text-sm font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                Minecraft Dome Schematic
+              </h3>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+                For mega server builds, import generated structures as a <code className="text-emerald-400 font-mono">.schematic</code> or <code className="text-emerald-400 font-mono">.litematic</code> file to project holographic placement outlines in-game.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. FAQ (TARGETING TOP SEMRUSH & SERP QUERIES) */}
+      <section className={`py-14 transition-colors ${isDark ? 'bg-[#111418]' : 'bg-[#f8f9fa]'}`}>
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6">
           <div className="text-center space-y-2">
             <h2 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
               Frequently Asked Questions (FAQ)
             </h2>
             <p className={`text-xs ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
-              Everything you need to know about generating Minecraft domes, spheres, and circles.
+              Everything you need to know about generating Minecraft domes, spheres, roof plans, and circular shapes.
             </p>
           </div>
 
           <div className="space-y-3 text-xs sm:text-sm">
             <div
               className={`p-4 space-y-1.5 rounded-sm border ${
-                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-white border-stone-200 shadow-2xs'
               }`}
             >
               <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
@@ -311,27 +357,53 @@ export default function Home() {
 
             <div
               className={`p-4 space-y-1.5 rounded-sm border ${
-                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-white border-stone-200 shadow-2xs'
               }`}
             >
               <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                Can I build domes in Minecraft Survival without mods or WorldEdit?
+                Does this Minecraft Dome Generator work on Bedrock Edition (PE, Xbox, Switch)?
               </h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
-                Yes! Our tool was designed for vanilla survival players. You do not need WorldEdit, Axiom, or Litematica. Open the 2D blueprint on your second monitor or phone while placing blocks in your survival world.
+                Yes! <strong>Minecraft Dome Generator Bedrock</strong> compatibility is 100% identical to Java Edition because both games use standard 1x1x1 grid blocks. Simply open the 2D layer slicer in your browser and build each layer step-by-step.
               </p>
             </div>
 
             <div
               className={`p-4 space-y-1.5 rounded-sm border ${
-                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-stone-50 border-stone-200'
+                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-white border-stone-200 shadow-2xs'
+              }`}
+            >
+              <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                How do I build a Minecraft dome roof?
+              </h3>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+                To create a <strong>minecraft dome roof</strong>, match the diameter of your building’s circular or square walls. Set the generator shape to Dome, adjust the height to your desired roof pitch, and follow the upper layers from the base up to the final crown cap block.
+              </p>
+            </div>
+
+            <div
+              className={`p-4 space-y-1.5 rounded-sm border ${
+                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-white border-stone-200 shadow-2xs'
+              }`}
+            >
+              <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
+                What is the command to make a dome in Minecraft?
+              </h3>
+              <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+                With WorldEdit installed on Java, stand at the center point and run <code className="text-emerald-500 font-mono">//hsphere glass [radius] 0,[radius],0</code> to generate a hollow upper half sphere. In vanilla Minecraft without mods, you use our 2D layer blueprint to place blocks manually.
+              </p>
+            </div>
+
+            <div
+              className={`p-4 space-y-1.5 rounded-sm border ${
+                isDark ? 'bg-[#181d24] border-[#2d3540]' : 'bg-white border-stone-200 shadow-2xs'
               }`}
             >
               <h3 className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                 How is MinecraftDomeGenerator.cyou different from Plotz?
               </h3>
               <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
-                Unlike older Flash/CPU-based tools like Plotz, MinecraftDomeGenerator runs on 100% client-side WebGL (60 FPS), supports full 360-degree orbit inspection, interactive pan/zoom on the 2D slicer, custom symmetry lines, and survival layer checkmarks.
+                Unlike older tools like Plotz, MinecraftDomeGenerator runs on 100% client-side WebGL (60 FPS), supports full 360-degree orbit inspection, interactive pan/zoom on the 2D slicer, custom symmetry lines, and survival layer checkmarks with full Light &amp; Dark mode support.
               </p>
             </div>
           </div>

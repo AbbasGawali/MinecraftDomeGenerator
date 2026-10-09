@@ -43,16 +43,16 @@ export default function CircleGeneratorPage() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div className="p-5 space-y-2 rounded-sm border border-stone-200 dark:border-[#2d3540] bg-white dark:bg-[#181d24]">
+          <div className="theme-card p-5 space-y-2 rounded-sm border shadow-2xs">
             <h3 className="font-bold text-sm">Even vs Odd Circle Diameters</h3>
-            <p className="leading-relaxed opacity-75 text-xs">
+            <p className="leading-relaxed opacity-80 text-xs">
               Odd circles (e.g. 15, 21, 31 blocks) have a single center block. Even circles (e.g. 16, 20, 30 blocks) have a 2x2 center. For castle towers with single doors, choose odd; for 2-wide pathways or double doors, choose even.
             </p>
           </div>
 
-          <div className="p-5 space-y-2 rounded-sm border border-stone-200 dark:border-[#2d3540] bg-white dark:bg-[#181d24]">
+          <div className="theme-card p-5 space-y-2 rounded-sm border shadow-2xs">
             <h3 className="font-bold text-sm">Building Cardinal Spokes</h3>
-            <p className="leading-relaxed opacity-75 text-xs">
+            <p className="leading-relaxed opacity-80 text-xs">
               Always place your crosshair spokes (+ shape from center to 4 outer edges) first. Then connect the four ends by matching the block sequences indicated on our 2D grid.
             </p>
           </div>

@@ -31,15 +31,15 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
     const root = document.documentElement;
     const body = document.body;
     if (t === 'light') {
-      root.classList.add('light-theme');
-      root.classList.remove('dark-theme');
-      body.classList.add('light-theme');
-      body.classList.remove('dark-theme');
+      root.classList.add('light-theme', 'light');
+      root.classList.remove('dark-theme', 'dark');
+      body.classList.add('light-theme', 'light');
+      body.classList.remove('dark-theme', 'dark');
     } else {
-      root.classList.add('dark-theme');
-      root.classList.remove('light-theme');
-      body.classList.add('dark-theme');
-      body.classList.remove('light-theme');
+      root.classList.add('dark-theme', 'dark');
+      root.classList.remove('light-theme', 'light');
+      body.classList.add('dark-theme', 'dark');
+      body.classList.remove('light-theme', 'light');
     }
   };
 

@@ -1,8 +1,10 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark-theme, .dark-theme *, .dark, .dark *));
+
 :root {
   --bg-color: #f8f9fa;
-  --text-color: #111827;
+  --text-color: #0f172a;
   --card-bg: #ffffff;
   --panel-bg: #ffffff;
   --border-color: #e2e8f0;
@@ -10,7 +12,7 @@
   --selection-text: #ffffff;
 }
 
-html.dark-theme {
+html.dark-theme, html.dark {
   --bg-color: #111418;
   --text-color: #f3f4f6;
   --card-bg: #181d24;
@@ -20,9 +22,9 @@ html.dark-theme {
   --selection-text: #ffffff;
 }
 
-html.light-theme {
+html.light-theme, html.light {
   --bg-color: #f8f9fa;
-  --text-color: #111827;
+  --text-color: #0f172a;
   --card-bg: #ffffff;
   --panel-bg: #ffffff;
   --border-color: #e2e8f0;
@@ -44,8 +46,45 @@ html, body {
   color: var(--selection-text);
 }
 
+/* Theme Utilities */
+.theme-bg {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+}
+
+.theme-card {
+  background-color: var(--card-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.theme-panel {
+  background-color: var(--panel-bg);
+  border-color: var(--border-color);
+  color: var(--text-color);
+}
+
+.theme-border {
+  border-color: var(--border-color);
+}
+
 /* Minecraft Button Themes */
 .mc-button {
+  background: #f1f5f9;
+  color: #1e293b;
+  border-top: 2px solid #ffffff;
+  border-left: 2px solid #ffffff;
+  border-bottom: 2px solid #cbd5e1;
+  border-right: 2px solid #cbd5e1;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4);
+  transition: all 0.08s ease;
+}
+
+.mc-button:hover {
+  background: #e2e8f0;
+}
+
+html.dark-theme .mc-button, html.dark .mc-button {
   background: #2a323d;
   color: #ffffff;
   border-top: 2px solid #3f4a59;
@@ -53,124 +92,58 @@ html, body {
   border-bottom: 2px solid #171c22;
   border-right: 2px solid #171c22;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1);
-  transition: all 0.08s ease;
 }
 
-html.light-theme .mc-button {
-  background: #f1f5f9;
-  color: #1e293b;
-  border-top: 2px solid #ffffff;
-  border-left: 2px solid #ffffff;
-  border-bottom: 2px solid #cbd5e1;
-  border-right: 2px solid #cbd5e1;
-}
-
-html.light-theme .mc-button:hover {
-  background: #e2e8f0;
-}
-
-.mc-button:hover {
-  background: #36404e;
-  border-top-color: #4f5d6f;
-  border-left-color: #4f5d6f;
-}
-
-.mc-button:active {
-  background: #1e242c;
-  border-top: 2px solid #171c22;
-  border-left: 2px solid #171c22;
-  border-bottom: 2px solid #3f4a59;
-  border-right: 2px solid #3f4a59;
+html.dark-theme .mc-button:hover, html.dark .mc-button:hover {
+  background: #343e4b;
 }
 
 .mc-button-green {
-  background: #059669;
+  background: #10b981;
   color: #ffffff;
   border-top: 2px solid #34d399;
   border-left: 2px solid #34d399;
-  border-bottom: 2px solid #064e3b;
-  border-right: 2px solid #064e3b;
+  border-bottom: 2px solid #059669;
+  border-right: 2px solid #059669;
+  text-shadow: 1px 1px 0 #047857;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  transition: all 0.08s ease;
 }
 
 .mc-button-green:hover {
-  background: #10b981;
+  background: #059669;
 }
 
-.mc-button-blue {
-  background: #0284c7;
-  color: #ffffff;
-  border-top: 2px solid #38bdf8;
-  border-left: 2px solid #38bdf8;
-  border-bottom: 2px solid #0369a1;
-  border-right: 2px solid #0369a1;
+.mc-button-green:active {
+  border-top: 2px solid #059669;
+  border-left: 2px solid #059669;
+  border-bottom: 2px solid #34d399;
+  border-right: 2px solid #34d399;
 }
 
-.mc-button-blue:hover {
-  background: #0ea5e9;
-}
-
-/* Custom Minecraft Range Slider */
-input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  background: #1e242c;
-  height: 8px;
-  border-radius: 0;
-  border: 1px solid #323a45;
-  outline: none;
-}
-
-html.light-theme input[type="range"] {
-  background: #e2e8f0;
-  border: 1px solid #cbd5e1;
-}
-
-input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 16px;
-  height: 22px;
-  background: #38bdf8;
-  border-top: 2px solid #7dd3fc;
-  border-left: 2px solid #7dd3fc;
-  border-bottom: 2px solid #0369a1;
-  border-right: 2px solid #0369a1;
-  cursor: pointer;
-}
-
-input[type="range"]::-moz-range-thumb {
-  width: 16px;
-  height: 22px;
-  background: #38bdf8;
-  border-top: 2px solid #7dd3fc;
-  border-left: 2px solid #7dd3fc;
-  border-bottom: 2px solid #0369a1;
-  border-right: 2px solid #0369a1;
-  cursor: pointer;
-}
-
-/* Scrollbar */
+/* Custom Scrollbars */
 ::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: transparent;
+  background: var(--bg-color);
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a323d;
-  border: 1px solid #3f4a59;
+  background: #94a3b8;
+  border-radius: 4px;
 }
 
-html.light-theme ::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
-  border: 1px solid #94a3b8;
+html.dark-theme ::-webkit-scrollbar-thumb, html.dark ::-webkit-scrollbar-thumb {
+  background: #2e3846;
 }
 
-@media print {
-  header, footer, nav, .no-print, button {
-    display: none !important;
-  }
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+html.dark-theme ::-webkit-scrollbar-thumb:hover, html.dark ::-webkit-scrollbar-thumb:hover {
+  background: #3e4c5e;
 }

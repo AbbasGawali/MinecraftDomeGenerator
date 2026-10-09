@@ -14,7 +14,7 @@ export default function Footer() {
         isDark ? 'bg-[#0e1013] border-[#21272e]' : 'bg-stone-100 border-stone-200'
       }`}
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+      <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div className="space-y-2">
             <div className="flex items-center gap-2">
@@ -22,7 +22,7 @@ export default function Footer() {
                 M
               </div>
               <span className={`font-bold text-sm ${isDark ? 'text-white' : 'text-slate-900'}`}>
-                MinecraftDome.cyou
+                MinecraftDomeGenerator<span className="text-emerald-500">.cyou</span>
               </span>
             </div>
             <p className={`text-xs leading-relaxed ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>

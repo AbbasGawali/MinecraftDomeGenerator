@@ -142,14 +142,14 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark-theme scroll-smooth">
+    <html lang="en" className="dark-theme scroll-smooth" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body className="min-h-screen flex flex-col antialiased bg-[var(--bg-color)] text-[var(--text-color)] selection:bg-emerald-500/30 selection:text-emerald-300">
+      <body className="min-h-screen flex flex-col antialiased">
         <ThemeProvider>
           {/* Dynamic Theme-Aware Navbar */}
           <Navbar />

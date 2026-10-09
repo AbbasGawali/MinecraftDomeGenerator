@@ -8,7 +8,6 @@ interface Props {
   model: VoxelModel;
   currentLayer: number;
   renderMode: 'all' | 'upToCurrent' | 'currentOnly';
-  showGrid?: boolean;
 }
 
 export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props) {
@@ -16,9 +15,12 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
   const cameraRef = useRef<THREE.PerspectiveCamera | null>(null);
+  const instancedMeshRef = useRef<THREE.InstancedMesh | null>(null);
+  const gridHelperRef = useRef<THREE.GridHelper | null>(null);
+  const isNeedsRenderRef = useRef<boolean>(true);
   const animFrameRef = useRef<number | null>(null);
 
-  // Smooth Orbit Controller state with inertia damping
+  // Orbit Controller State
   const ctrlRef = useRef({
     isDragging: false,
     isPanning: false,
@@ -28,42 +30,43 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     phi: Math.PI / 3.2,
     radius: 45,
     target: new THREE.Vector3(0, 0, 0),
-    // Target values for smooth interpolation
     targetTheta: Math.PI / 4,
     targetPhi: Math.PI / 3.2,
     targetRadius: 45,
     targetCenter: new THREE.Vector3(0, 0, 0),
   });
 
+  // 1. ONE-TIME Three.js Initialization (Zero leaks, Zero renderer recreation)
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
-    // 1. Scene setup
     const scene = new THREE.Scene();
     scene.background = new THREE.Color('#ffffff');
     sceneRef.current = scene;
 
-    // 2. Camera setup
     const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 1000);
     cameraRef.current = camera;
     scene.add(camera);
 
-    // 3. Renderer with antialiasing and proper sRGB color space for vibrant colors
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
+    const renderer = new THREE.WebGLRenderer({
+      antialias: true,
+      powerPreference: 'high-performance',
+      precision: 'mediump',
+      preserveDrawingBuffer: false,
+    });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5)); // Cap DPR to 1.5 for buttery performance
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.NoToneMapping;
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 4. Vibrant Studio Headlight Setup (ensures colors are never dull or shadowed)
+    // Lights
     const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
     scene.add(ambientLight);
 
-    // Camera headlight ensures face colors stay bright from whatever angle you orbit
     const headlight = new THREE.DirectionalLight(0xffffff, 0.45);
     headlight.position.set(0, 0, 1);
     camera.add(headlight);
@@ -72,29 +75,26 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     topLight.position.set(20, 50, 20);
     scene.add(topLight);
 
-    // 5. Clean minimalist ground grid
-    const maxDim = Math.max(model.diameterX, model.diameterZ, 30);
-    const gridSize = Math.ceil(maxDim * 1.6);
-    const gridHelper = new THREE.GridHelper(gridSize, gridSize, 0x94a3b8, 0xe2e8f0);
-    gridHelper.position.y = -0.5;
-    scene.add(gridHelper);
+    // Dynamic grid helper
+    const grid = new THREE.GridHelper(60, 60, 0x94a3b8, 0xe2e8f0);
+    grid.position.y = -0.5;
+    scene.add(grid);
+    gridHelperRef.current = grid;
 
-    // 6. Camera distance and center calculations
     const ctrl = ctrlRef.current;
-    const modelHeight = model.height || 15;
-    const initialRadius = Math.max(model.diameterX, model.diameterZ, modelHeight) * 2.2 + 8;
-    ctrl.radius = initialRadius;
-    ctrl.targetRadius = initialRadius;
-    ctrl.targetCenter.set(0, modelHeight * 0.4, 0);
-    ctrl.target.copy(ctrl.targetCenter);
 
-    // 7. Mouse & Touch Interaction with full 360-degree orbit
+    const requestRender = () => {
+      isNeedsRenderRef.current = true;
+    };
+
+    // Mouse & Touch Orbit Controls
     const onPointerDown = (e: PointerEvent) => {
       ctrl.isDragging = true;
       ctrl.isPanning = e.button === 2 || e.shiftKey;
       ctrl.prevX = e.clientX;
       ctrl.prevY = e.clientY;
       (e.target as HTMLElement).setPointerCapture(e.pointerId);
+      requestRender();
     };
 
     const onPointerMove = (e: PointerEvent) => {
@@ -112,10 +112,10 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
         ctrl.targetCenter.addScaledVector(right, -dx * panSpeed);
         ctrl.targetCenter.y += dy * panSpeed;
       } else {
-        // Full 360-degree Orbit
         ctrl.targetTheta -= dx * 0.008;
         ctrl.targetPhi = Math.max(0.02, Math.min(Math.PI - 0.05, ctrl.targetPhi - dy * 0.008));
       }
+      requestRender();
     };
 
     const onPointerUp = (e: PointerEvent) => {
@@ -130,6 +130,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       e.preventDefault();
       const zoomFactor = e.deltaY > 0 ? 1.12 : 0.89;
       ctrl.targetRadius = Math.max(4, Math.min(350, ctrl.targetRadius * zoomFactor));
+      requestRender();
     };
 
     const dom = renderer.domElement;
@@ -140,22 +141,39 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     dom.addEventListener('wheel', onWheel, { passive: false });
     dom.addEventListener('contextmenu', (e) => e.preventDefault());
 
-    // 8. Animation loop with buttery smooth damping
+    // Intelligent Render Loop (Only renders when moving or dirty to maintain 0% idle CPU)
+    let idleFrames = 0;
     const animate = () => {
       animFrameRef.current = requestAnimationFrame(animate);
 
-      const damp = 0.12;
-      ctrl.theta += (ctrl.targetTheta - ctrl.theta) * damp;
-      ctrl.phi += (ctrl.targetPhi - ctrl.phi) * damp;
-      ctrl.radius += (ctrl.targetRadius - ctrl.radius) * damp;
-      ctrl.target.lerp(ctrl.targetCenter, damp);
+      const damp = 0.16;
+      const diffTheta = Math.abs(ctrl.targetTheta - ctrl.theta);
+      const diffPhi = Math.abs(ctrl.targetPhi - ctrl.phi);
+      const diffRadius = Math.abs(ctrl.targetRadius - ctrl.radius);
+      const diffCenter = ctrl.target.distanceTo(ctrl.targetCenter);
 
-      camera.position.x = ctrl.target.x + ctrl.radius * Math.sin(ctrl.phi) * Math.sin(ctrl.theta);
-      camera.position.y = ctrl.target.y + ctrl.radius * Math.cos(ctrl.phi);
-      camera.position.z = ctrl.target.z + ctrl.radius * Math.sin(ctrl.phi) * Math.cos(ctrl.theta);
-      camera.lookAt(ctrl.target);
+      const isMoving = diffTheta > 0.0005 || diffPhi > 0.0005 || diffRadius > 0.01 || diffCenter > 0.01;
 
-      renderer.render(scene, camera);
+      if (isMoving || isNeedsRenderRef.current || idleFrames < 5) {
+        ctrl.theta += (ctrl.targetTheta - ctrl.theta) * damp;
+        ctrl.phi += (ctrl.targetPhi - ctrl.phi) * damp;
+        ctrl.radius += (ctrl.targetRadius - ctrl.radius) * damp;
+        ctrl.target.lerp(ctrl.targetCenter, damp);
+
+        camera.position.x = ctrl.target.x + ctrl.radius * Math.sin(ctrl.phi) * Math.sin(ctrl.theta);
+        camera.position.y = ctrl.target.y + ctrl.radius * Math.cos(ctrl.phi);
+        camera.position.z = ctrl.target.z + ctrl.radius * Math.sin(ctrl.phi) * Math.cos(ctrl.theta);
+        camera.lookAt(ctrl.target);
+
+        renderer.render(scene, camera);
+
+        if (!isMoving) {
+          idleFrames++;
+          isNeedsRenderRef.current = false;
+        } else {
+          idleFrames = 0;
+        }
+      }
     };
     animate();
 
@@ -164,6 +182,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       camera.aspect = container.clientWidth / container.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(container.clientWidth, container.clientHeight);
+      requestRender();
     };
 
     const resizeObserver = new ResizeObserver(handleResize);
@@ -179,15 +198,43 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       dom.removeEventListener('wheel', onWheel);
       renderer.dispose();
     };
+  }, []);
+
+  // 2. Camera Fit upon Model Dimensions Change
+  useEffect(() => {
+    const ctrl = ctrlRef.current;
+    const modelHeight = model.height || 15;
+    const initialRadius = Math.max(model.diameterX, model.diameterZ, modelHeight) * 2.2 + 8;
+    ctrl.targetRadius = initialRadius;
+    ctrl.targetCenter.set(0, modelHeight * 0.4, 0);
+
+    // Update ground grid size
+    const scene = sceneRef.current;
+    if (scene && gridHelperRef.current) {
+      scene.remove(gridHelperRef.current);
+      gridHelperRef.current.geometry.dispose();
+      const maxDim = Math.max(model.diameterX, model.diameterZ, 30);
+      const gridSize = Math.ceil(maxDim * 1.6);
+      const newGrid = new THREE.GridHelper(gridSize, gridSize, 0x94a3b8, 0xe2e8f0);
+      newGrid.position.y = -0.5;
+      scene.add(newGrid);
+      gridHelperRef.current = newGrid;
+    }
+
+    isNeedsRenderRef.current = true;
   }, [model.diameterX, model.diameterZ, model.height]);
 
-  // 9. Voxel Mesh Generation with Vibrant Voxel Materials & Seam Edges
+  // 3. Fast InstancedMesh Update (Re-uses single geometry & material)
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
 
-    const existing = scene.getObjectByName('voxelMesh');
-    if (existing) scene.remove(existing);
+    if (instancedMeshRef.current) {
+      scene.remove(instancedMeshRef.current);
+      instancedMeshRef.current.geometry.dispose();
+      (instancedMeshRef.current.material as THREE.Material).dispose();
+      instancedMeshRef.current = null;
+    }
 
     let activeVoxels = model.voxels;
     if (renderMode === 'upToCurrent') {
@@ -196,14 +243,13 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       activeVoxels = model.voxels.filter((v) => v.y === currentLayer);
     }
 
-    if (activeVoxels.length === 0) return;
+    if (activeVoxels.length === 0) {
+      isNeedsRenderRef.current = true;
+      return;
+    }
 
-    // 0.94 box size ensures crisp, defined 3D voxel block edges
     const boxGeo = new THREE.BoxGeometry(0.94, 0.94, 0.94);
-    // MeshLambertMaterial with rich ambient response reproduces exact vivid 2D colors
-    const boxMat = new THREE.MeshLambertMaterial({
-      vertexColors: false,
-    });
+    const boxMat = new THREE.MeshLambertMaterial({ vertexColors: false });
 
     const instancedMesh = new THREE.InstancedMesh(boxGeo, boxMat, activeVoxels.length);
     instancedMesh.name = 'voxelMesh';
@@ -211,20 +257,22 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     const dummy = new THREE.Object3D();
     const color = new THREE.Color();
 
-    activeVoxels.forEach((voxel, i) => {
+    for (let i = 0; i < activeVoxels.length; i++) {
+      const voxel = activeVoxels[i];
       dummy.position.set(voxel.x, voxel.y, voxel.z);
       dummy.updateMatrix();
       instancedMesh.setMatrixAt(i, dummy.matrix);
 
-      // Convert hex color directly into sRGB color space
       color.set(voxel.color);
       instancedMesh.setColorAt(i, color);
-    });
+    }
 
     instancedMesh.instanceMatrix.needsUpdate = true;
     if (instancedMesh.instanceColor) instancedMesh.instanceColor.needsUpdate = true;
 
     scene.add(instancedMesh);
+    instancedMeshRef.current = instancedMesh;
+    isNeedsRenderRef.current = true;
   }, [model, currentLayer, renderMode]);
 
   return (
@@ -237,7 +285,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
 
       {/* Floating Minimalist 3D HUD */}
       <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-stone-200 text-[11px] font-medium text-slate-600 shadow-2xs pointer-events-none flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
         <span>Drag to orbit 360° • Scroll to zoom</span>
       </div>
 

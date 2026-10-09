@@ -1,4 +1,4 @@
-// 3D Voxel Generator Core Engine for Minecraft Shapes
+// 3D Voxel Generator Core Engine for Minecraft Shapes (High Performance)
 
 export type ShapeType = 'dome' | 'cone' | 'sphere' | 'torus' | 'cylinder' | 'geodesic';
 
@@ -8,7 +8,7 @@ export interface ShapeConfig {
   diameterZ: number;
   height: number;
   thickness: number; // 0 = solid, 1 = 1 block hollow shell, 2 = 2 blocks, etc.
-  smoothCurve: boolean; // Enable half slab detection
+  smoothCurve: boolean;
   geodesic: boolean;
   symmetryLines: boolean;
   lineCount: number;
@@ -19,7 +19,7 @@ export interface ShapeConfig {
 }
 
 export interface VoxelBlock {
-  x: number; // Local grid coords
+  x: number;
   y: number;
   z: number;
   color: string;
@@ -39,7 +39,7 @@ export interface VoxelModel {
   maxY: number;
 }
 
-// Color palettes for clear layer-by-layer distinguishing
+// Color palettes
 export const COLOR_PALETTES: Record<string, string[]> = {
   okabeIto: [
     '#E69F00', '#56B4E9', '#009E73', '#F0E442', '#0072B2', '#D55E00', '#CC79A7', '#000000',
@@ -63,6 +63,8 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
     diameterZ,
     height,
     thickness,
+    smoothCurve,
+    geodesic,
     symmetryLines,
     lineCount,
     lineWidthDeg,
@@ -77,12 +79,8 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
 
   const rx = diameterX / 2;
   const rz = diameterZ / 2;
-  const ry = height;
+  const ry = Math.max(1, height);
 
-  const minX = -Math.ceil(rx);
-  const maxX = Math.ceil(rx);
-  const minZ = -Math.ceil(rz);
-  const maxZ = Math.ceil(rz);
   const minY = 0;
   const maxY = Math.max(1, Math.ceil(height));
 
@@ -90,22 +88,48 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
   const halfWidthRad = ((lineWidthDeg / 2) * Math.PI) / 180;
   const angleStep = (2 * Math.PI) / Math.max(1, lineCount);
 
+  const offX = diameterX % 2 === 0 ? 0.5 : 0;
+  const offZ = diameterZ % 2 === 0 ? 0.5 : 0;
+
   for (let y = minY; y < maxY; y++) {
     const layerVoxels: VoxelBlock[] = [];
+    const cy = y + 0.5;
 
-    // Layer-specific radius checks
+    // Calculate dynamic horizontal bounding box for this layer to skip outer empty space
+    let layerRx = rx;
+    let layerRz = rz;
+
+    if (shape === 'dome') {
+      const hRatio = Math.min(1, cy / ry);
+      const radScale = Math.sqrt(Math.max(0, 1 - hRatio * hRatio));
+      layerRx = rx * radScale;
+      layerRz = rz * radScale;
+    } else if (shape === 'cone') {
+      const progress = Math.max(0, 1 - cy / ry);
+      layerRx = rx * progress;
+      layerRz = rz * progress;
+    } else if (shape === 'sphere') {
+      const midY = ry / 2;
+      const hRatio = Math.min(1, Math.abs(cy - midY) / midY);
+      const radScale = Math.sqrt(Math.max(0, 1 - hRatio * hRatio));
+      layerRx = rx * radScale;
+      layerRz = rz * radScale;
+    }
+
+    const minX = -Math.ceil(layerRx) - 1;
+    const maxX = Math.ceil(layerRx) + 1;
+    const minZ = -Math.ceil(layerRz) - 1;
+    const maxZ = Math.ceil(layerRz) + 1;
+
     for (let x = minX; x <= maxX; x++) {
       for (let z = minZ; z <= maxZ; z++) {
-        // Distance calculation based on shape type
         let isInside = false;
         let isInner = false;
 
-        const cx = x + (diameterX % 2 === 0 ? 0.5 : 0);
-        const cz = z + (diameterZ % 2 === 0 ? 0.5 : 0);
-        const cy = y + 0.5;
+        const cx = x + offX;
+        const cz = z + offZ;
 
         if (shape === 'dome') {
-          // Hemisphere
           const distSqOuter = (cx / rx) ** 2 + (cz / rz) ** 2 + (cy / ry) ** 2;
           isInside = distSqOuter <= 1.0;
 
@@ -117,12 +141,11 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
             isInner = distSqInner < 1.0;
           }
         } else if (shape === 'cone') {
-          // Tapered cone: radius shrinks as y goes up
           const progress = 1 - cy / ry;
           if (progress >= 0) {
-            const currRx = rx * progress;
-            const currRz = rz * progress;
-            const distSqOuter = (cx / Math.max(0.1, currRx)) ** 2 + (cz / Math.max(0.1, currRz)) ** 2;
+            const currRx = Math.max(0.1, rx * progress);
+            const currRz = Math.max(0.1, rz * progress);
+            const distSqOuter = (cx / currRx) ** 2 + (cz / currRz) ** 2;
             isInside = distSqOuter <= 1.0;
 
             if (thickness > 0) {
@@ -133,20 +156,18 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
             }
           }
         } else if (shape === 'sphere') {
-          // Full Sphere centered at y = height / 2
-          const midY = height / 2;
-          const distSqOuter = (cx / rx) ** 2 + ((cy - midY) / (height / 2)) ** 2 + (cz / rz) ** 2;
+          const midY = ry / 2;
+          const distSqOuter = (cx / rx) ** 2 + ((cy - midY) / midY) ** 2 + (cz / rz) ** 2;
           isInside = distSqOuter <= 1.0;
 
           if (thickness > 0) {
             const innerRx = Math.max(0.1, rx - thickness);
             const innerRz = Math.max(0.1, rz - thickness);
-            const innerRy = Math.max(0.1, height / 2 - thickness);
+            const innerRy = Math.max(0.1, midY - thickness);
             const distSqInner = (cx / innerRx) ** 2 + ((cy - midY) / innerRy) ** 2 + (cz / innerRz) ** 2;
             isInner = distSqInner < 1.0;
           }
         } else if (shape === 'torus') {
-          // Donut / Torus
           const R = (rx + rz) / 2 * 0.7;
           const rTube = Math.max(1, height / 2);
           const distCenter = Math.sqrt(cx ** 2 + cz ** 2);
@@ -157,8 +178,7 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
             const innerRTube = Math.max(0.1, rTube - thickness);
             isInner = distSq < innerRTube ** 2;
           }
-        } else if (shape === 'cylinder') {
-          // Open/Closed Cylinder
+        } else {
           const distSqOuter = (cx / rx) ** 2 + (cz / rz) ** 2;
           isInside = distSqOuter <= 1.0 && cy <= ry;
 
@@ -168,14 +188,9 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
             const distSqInner = (cx / innerRx) ** 2 + (cz / innerRz) ** 2;
             isInner = distSqInner < 1.0 && (y > 0 && y < maxY - 1);
           }
-        } else {
-          // Default Ellipsoid Dome
-          const distSqOuter = (cx / rx) ** 2 + (cz / rz) ** 2 + (cy / ry) ** 2;
-          isInside = distSqOuter <= 1.0;
         }
 
         if (isInside && !isInner) {
-          // Check Symmetry Lines
           let isSym = false;
           if (symmetryLines && (y % layerSpacing === 0)) {
             const angle = (Math.atan2(cz, cx) - rotRad + 4 * Math.PI) % (2 * Math.PI);
@@ -190,15 +205,15 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
             }
           }
 
-          // Pick block color based on layer pattern and symmetry
           const colorIndex = isSym ? 7 : (y + Math.abs(x % 2) + Math.abs(z % 2)) % colors.length;
-          const blockColor = isSym ? '#ef4444' : colors[colorIndex];
+          const blockColor = isSym ? '#000000' : colors[colorIndex];
 
           const block: VoxelBlock = {
             x,
             y,
             z,
             color: blockColor,
+            isHalfSlab: smoothCurve && (y % 2 === 1),
             isSymmetry: isSym,
           };
 
@@ -208,9 +223,7 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
       }
     }
 
-    if (layerVoxels.length > 0) {
-      layers.set(y, layerVoxels);
-    }
+    layers.set(y, layerVoxels);
   }
 
   return {

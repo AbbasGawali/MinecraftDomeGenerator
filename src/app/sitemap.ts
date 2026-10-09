@@ -2,7 +2,7 @@ import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const baseUrl = 'https://minecraftdomegenerator.cyou';
-  const lastModified = new Date();
+  const lastModified = new Date('2026-10-09');
 
   const routes = [
     '',

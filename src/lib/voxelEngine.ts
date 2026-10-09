@@ -24,6 +24,7 @@ export interface VoxelBlock {
   z: number;
   color: string;
   isSlab?: 'bottom' | 'top' | 'none';
+  isHalfSlab?: boolean;
   isSymmetry?: boolean;
 }
 

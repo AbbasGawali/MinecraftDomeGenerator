@@ -18,22 +18,14 @@ export const metadata: Metadata = {
 
 export default function TorusGeneratorPage() {
   return (
-    <main className="min-h-screen py-6">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
-        <div className="max-w-3xl space-y-2">
-          <div className="inline-block bg-blue-100 text-blue-800 text-xs font-bold px-2.5 py-1">
-            3D Torus Engine
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight">
-            Minecraft Torus &amp; Donut Ring Generator
-          </h1>
-          <p className="text-sm text-slate-600 leading-relaxed">
-            Generate 3D hollow rings and torus arches for orbital stargates and futuristic megastructures.
-          </p>
-        </div>
-
-        <MinecraftShapeGenerator />
-      </div>
+    <main className="min-h-screen">
+      <MinecraftShapeGenerator
+        initialShape="torus"
+        initialDiameter={30}
+        initialHeight={10}
+        title="Minecraft Torus & Donut Ring Generator"
+        subtitle="Generate 3D hollow rings and torus arches for orbital stargates and futuristic megastructures with layer-by-layer blueprints."
+      />
     </main>
   );
 }

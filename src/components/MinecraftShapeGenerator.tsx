@@ -7,16 +7,34 @@ import { generateVoxels, ShapeConfig, ShapeType } from '@/lib/voxelEngine';
 import { useTheme } from '@/context/ThemeContext';
 import { Layers, Settings, Share2, Printer, RotateCcw, Check, X, ChevronRight } from 'lucide-react';
 
-export default function MinecraftShapeGenerator() {
+export interface MinecraftShapeGeneratorProps {
+  initialShape?: ShapeType;
+  initialDiameter?: number;
+  initialHeight?: number;
+  initialSmoothCurve?: boolean;
+  initialGeodesic?: boolean;
+  title?: string;
+  subtitle?: string;
+}
+
+export default function MinecraftShapeGenerator({
+  initialShape = 'dome',
+  initialDiameter = 30,
+  initialHeight = 15,
+  initialSmoothCurve = false,
+  initialGeodesic = false,
+  title,
+  subtitle,
+}: MinecraftShapeGeneratorProps) {
   const { theme } = useTheme();
   const isDark = theme === 'dark';
 
   // Shape configuration
-  const [shape, setShape] = useState<ShapeType>('dome');
-  const [diameter, setDiameter] = useState<number>(30);
-  const [height, setHeight] = useState<number>(15);
-  const [smoothCurve, setSmoothCurve] = useState<boolean>(false);
-  const [geodesic, setGeodesic] = useState<boolean>(false);
+  const [shape, setShape] = useState<ShapeType>(initialShape);
+  const [diameter, setDiameter] = useState<number>(initialDiameter);
+  const [height, setHeight] = useState<number>(initialHeight);
+  const [smoothCurve, setSmoothCurve] = useState<boolean>(initialSmoothCurve);
+  const [geodesic, setGeodesic] = useState<boolean>(initialGeodesic || initialShape === 'geodesic');
   const [allowLargeSizes, setAllowLargeSizes] = useState<boolean>(false);
 
   // Symmetry settings
@@ -29,7 +47,7 @@ export default function MinecraftShapeGenerator() {
   // Tabs & Views
   const [activeTab, setActiveTab] = useState<'shape' | 'layers'>('shape');
   const [viewMode, setViewMode] = useState<'both' | '3d' | '2d'>('both');
-  const [currentLayer, setCurrentLayer] = useState<number>(14);
+  const [currentLayer, setCurrentLayer] = useState<number>(Math.max(0, initialHeight - 1));
   const [palette, setPalette] = useState<string>('okabeIto');
   const [showOnionSkin, setShowOnionSkin] = useState<boolean>(true);
   const [builtLayers, setBuiltLayers] = useState<Set<number>>(new Set());
@@ -124,10 +142,10 @@ export default function MinecraftShapeGenerator() {
               isDark ? 'text-white' : 'text-slate-900'
             }`}
           >
-            <span className="text-emerald-500">❖</span> Minecraft Dome Generator
+            <span className="text-emerald-500">❖</span> {title || 'Minecraft Dome Generator'}
           </h1>
           <p className={`text-xs sm:text-sm mt-1 ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
-            Free 3D &amp; 2D voxel shape generator for Minecraft dome roofs, spheres, circles, and cones with layer-by-layer blueprints.
+            {subtitle || 'Free 3D & 2D voxel shape generator for Minecraft dome roofs, spheres, circles, and cones with layer-by-layer blueprints.'}
           </p>
         </div>
 
@@ -228,11 +246,17 @@ export default function MinecraftShapeGenerator() {
                     Base Primitive
                   </div>
 
-                  <div className="grid grid-cols-2 gap-2">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                     <button
-                      onClick={() => setShape('dome')}
+                      onClick={() => {
+                        setShape('dome');
+                        setGeodesic(false);
+                        if (height > Math.round(diameter / 2)) {
+                          setHeight(Math.max(1, Math.round(diameter / 2)));
+                        }
+                      }}
                       className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
-                        shape === 'dome'
+                        shape === 'dome' && !geodesic
                           ? isDark
                             ? 'bg-[#202934] border-emerald-500 text-emerald-300'
                             : 'bg-emerald-50 border-emerald-500 text-emerald-800'
@@ -241,12 +265,36 @@ export default function MinecraftShapeGenerator() {
                           : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
                       }`}
                     >
-                      <span>Dome (rounded)</span>
-                      {shape === 'dome' && <Check className="w-4 h-4 text-emerald-500" />}
+                      <span>Dome (roof)</span>
+                      {shape === 'dome' && !geodesic && <Check className="w-3.5 h-3.5 text-emerald-500" />}
                     </button>
 
                     <button
-                      onClick={() => setShape('cone')}
+                      onClick={() => {
+                        setShape('sphere');
+                        setGeodesic(false);
+                        setHeight(diameter);
+                      }}
+                      className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
+                        shape === 'sphere'
+                          ? isDark
+                            ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                            : 'bg-emerald-50 border-emerald-500 text-emerald-800'
+                          : isDark
+                          ? 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
+                      }`}
+                    >
+                      <span>Sphere (3D)</span>
+                      {shape === 'sphere' && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShape('cone');
+                        setGeodesic(false);
+                        setHeight(diameter);
+                      }}
                       className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
                         shape === 'cone'
                           ? isDark
@@ -257,8 +305,68 @@ export default function MinecraftShapeGenerator() {
                           : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
                       }`}
                     >
-                      <span>Cone (tapered)</span>
-                      {shape === 'cone' && <Check className="w-4 h-4 text-emerald-500" />}
+                      <span>Cone (spire)</span>
+                      {shape === 'cone' && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShape('cylinder');
+                        setGeodesic(false);
+                        setHeight(1);
+                      }}
+                      className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
+                        shape === 'cylinder'
+                          ? isDark
+                            ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                            : 'bg-emerald-50 border-emerald-500 text-emerald-800'
+                          : isDark
+                          ? 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
+                      }`}
+                    >
+                      <span>Circle (2D)</span>
+                      {shape === 'cylinder' && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShape('torus');
+                        setGeodesic(false);
+                        setHeight(Math.max(4, Math.round(diameter / 3)));
+                      }}
+                      className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
+                        shape === 'torus'
+                          ? isDark
+                            ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                            : 'bg-emerald-50 border-emerald-500 text-emerald-800'
+                          : isDark
+                          ? 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
+                      }`}
+                    >
+                      <span>Torus (ring)</span>
+                      {shape === 'torus' && <Check className="w-3.5 h-3.5 text-emerald-500" />}
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShape('geodesic');
+                        setGeodesic(true);
+                        setHeight(Math.max(1, Math.round(diameter / 2)));
+                      }}
+                      className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
+                        shape === 'geodesic' || (shape === 'dome' && geodesic)
+                          ? isDark
+                            ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                            : 'bg-emerald-50 border-emerald-500 text-emerald-800'
+                          : isDark
+                          ? 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                          : 'bg-stone-50 border-stone-200 text-slate-700 hover:bg-stone-100'
+                      }`}
+                    >
+                      <span>Geodesic</span>
+                      {(shape === 'geodesic' || (shape === 'dome' && geodesic)) && <Check className="w-3.5 h-3.5 text-emerald-500" />}
                     </button>
                   </div>
                 </div>

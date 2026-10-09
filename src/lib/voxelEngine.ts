@@ -99,7 +99,7 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
     let layerRx = rx;
     let layerRz = rz;
 
-    if (shape === 'dome') {
+    if (shape === 'dome' || shape === 'geodesic') {
       const hRatio = Math.min(1, cy / ry);
       const radScale = Math.sqrt(Math.max(0, 1 - hRatio * hRatio));
       layerRx = rx * radScale;
@@ -129,7 +129,7 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
         const cx = x + offX;
         const cz = z + offZ;
 
-        if (shape === 'dome') {
+        if (shape === 'dome' || shape === 'geodesic') {
           const distSqOuter = (cx / rx) ** 2 + (cz / rz) ** 2 + (cy / ry) ** 2;
           isInside = distSqOuter <= 1.0;
 
@@ -139,6 +139,15 @@ export function generateVoxels(config: ShapeConfig): VoxelModel {
             const innerRy = Math.max(0.1, ry - thickness);
             const distSqInner = (cx / innerRx) ** 2 + (cz / innerRz) ** 2 + (cy / innerRy) ** 2;
             isInner = distSqInner < 1.0;
+          }
+
+          if (shape === 'geodesic' || geodesic) {
+            const angle = Math.atan2(cz, cx);
+            const elevation = Math.asin(Math.min(1, cy / ry));
+            const isStrut = Math.abs(Math.sin(angle * 5 + elevation * 3)) < 0.4 || Math.abs(Math.cos(elevation * 4)) < 0.3;
+            if (!isStrut && distSqOuter > 0.65) {
+              isInside = false;
+            }
           }
         } else if (shape === 'cone') {
           const progress = 1 - cy / ry;

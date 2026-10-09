@@ -3,6 +3,7 @@
 import React, { useEffect, useRef } from 'react';
 import * as THREE from 'three';
 import { VoxelModel } from '@/lib/voxelEngine';
+import { useTheme } from '@/context/ThemeContext';
 
 interface Props {
   model: VoxelModel;
@@ -11,6 +12,7 @@ interface Props {
 }
 
 export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props) {
+  const { theme } = useTheme();
   const mountRef = useRef<HTMLDivElement>(null);
   const sceneRef = useRef<THREE.Scene | null>(null);
   const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
@@ -36,13 +38,13 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     targetCenter: new THREE.Vector3(0, 0, 0),
   });
 
-  // 1. ONE-TIME Three.js Initialization (Zero leaks, Zero renderer recreation)
+  // 1. ONE-TIME Three.js Initialization (Zero leaks)
   useEffect(() => {
     const container = mountRef.current;
     if (!container) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#14181d'); // Sleek Minecraft Dark Void
+    scene.background = new THREE.Color(theme === 'dark' ? '#14181d' : '#ffffff');
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -76,7 +78,12 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     scene.add(topLight);
 
     // Dynamic grid helper
-    const grid = new THREE.GridHelper(60, 60, 0x3b4450, 0x21272f);
+    const grid = new THREE.GridHelper(
+      60,
+      60,
+      theme === 'dark' ? 0x3b4450 : 0x94a3b8,
+      theme === 'dark' ? 0x21272f : 0xe2e8f0
+    );
     grid.position.y = -0.5;
     scene.add(grid);
     gridHelperRef.current = grid;
@@ -200,7 +207,32 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     };
   }, []);
 
-  // 2. Camera Fit
+  // 2. React to Theme Changes (Light vs Dark)
+  useEffect(() => {
+    const scene = sceneRef.current;
+    if (!scene) return;
+    scene.background = new THREE.Color(theme === 'dark' ? '#14181d' : '#ffffff');
+
+    if (gridHelperRef.current) {
+      scene.remove(gridHelperRef.current);
+      gridHelperRef.current.geometry.dispose();
+      const maxDim = Math.max(model.diameterX, model.diameterZ, 30);
+      const gridSize = Math.ceil(maxDim * 1.6);
+      const newGrid = new THREE.GridHelper(
+        gridSize,
+        gridSize,
+        theme === 'dark' ? 0x3b4450 : 0x94a3b8,
+        theme === 'dark' ? 0x21272f : 0xe2e8f0
+      );
+      newGrid.position.y = -0.5;
+      scene.add(newGrid);
+      gridHelperRef.current = newGrid;
+    }
+
+    isNeedsRenderRef.current = true;
+  }, [theme]);
+
+  // 3. Camera Fit
   useEffect(() => {
     const ctrl = ctrlRef.current;
     const modelHeight = model.height || 15;
@@ -214,7 +246,12 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       gridHelperRef.current.geometry.dispose();
       const maxDim = Math.max(model.diameterX, model.diameterZ, 30);
       const gridSize = Math.ceil(maxDim * 1.6);
-      const newGrid = new THREE.GridHelper(gridSize, gridSize, 0x3b4450, 0x21272f);
+      const newGrid = new THREE.GridHelper(
+        gridSize,
+        gridSize,
+        theme === 'dark' ? 0x3b4450 : 0x94a3b8,
+        theme === 'dark' ? 0x21272f : 0xe2e8f0
+      );
       newGrid.position.y = -0.5;
       scene.add(newGrid);
       gridHelperRef.current = newGrid;
@@ -223,7 +260,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     isNeedsRenderRef.current = true;
   }, [model.diameterX, model.diameterZ, model.height]);
 
-  // 3. Fast InstancedMesh Update
+  // 4. Fast InstancedMesh Update
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
@@ -275,20 +312,20 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
   }, [model, currentLayer, renderMode]);
 
   return (
-    <div className="relative w-full h-full min-h-[460px] bg-[#14181d] rounded-xl border border-[#2d3540] overflow-hidden flex flex-col shadow-inner">
+    <div className="relative w-full h-full min-h-[460px] bg-[var(--panel-bg)] rounded-xl border border-[var(--border-color)] overflow-hidden flex flex-col shadow-inner transition-colors">
       <div
         ref={mountRef}
         className="w-full h-full flex-1 cursor-grab active:cursor-grabbing select-none touch-none"
         title="Left click + drag to rotate 360° • Right click + drag to pan • Scroll to zoom"
       />
 
-      {/* Floating Dark HUD */}
-      <div className="absolute bottom-3 left-3 bg-[#1c2229]/90 backdrop-blur-md px-3 py-1.5 rounded-sm border border-[#3b4450] text-[11px] font-semibold text-zinc-300 pointer-events-none flex items-center gap-2">
+      {/* Floating HUD */}
+      <div className="absolute bottom-3 left-3 bg-[var(--card-bg)]/90 backdrop-blur-md px-3 py-1.5 rounded-sm border border-[var(--border-color)] text-[11px] font-semibold text-[var(--text-color)] pointer-events-none flex items-center gap-2">
         <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
         <span>Drag 360° • Scroll to zoom</span>
       </div>
 
-      <div className="absolute top-3 right-3 bg-[#1c2229]/90 backdrop-blur-md px-2.5 py-1 rounded-sm border border-[#3b4450] text-[11px] font-mono font-bold text-emerald-400 pointer-events-none">
+      <div className="absolute top-3 right-3 bg-[var(--card-bg)]/90 backdrop-blur-md px-2.5 py-1 rounded-sm border border-[var(--border-color)] text-[11px] font-mono font-bold text-emerald-500 pointer-events-none">
         {model.totalBlocks.toLocaleString()} blocks
       </div>
     </div>

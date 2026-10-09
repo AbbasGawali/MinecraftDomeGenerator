@@ -1,5 +1,6 @@
 import MinecraftShapeGenerator from '@/components/MinecraftShapeGenerator';
 import Link from 'next/link';
+import { Layers, Sparkles, Box, Shield, Zap, Eye, CheckCircle2, ChevronRight, HelpCircle, Compass, Grid, Hammer } from 'lucide-react';
 
 export default function Home() {
   return (
@@ -19,10 +20,10 @@ export default function Home() {
                 ⚡
               </div>
               <h3 className="text-lg font-bold text-slate-900">
-                100% Client-Side WebGL Rendering
+                100% Client-Side 3D Voxel Rendering
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Zero server lag. High-speed instanced voxel rendering allows smooth 60fps 3D orbital inspection and 2D pixel slicing even for mega builds with 100+ block diameters.
+                Zero server delay. Our high-performance Three.js instanced engine renders 60 FPS 3D previews and 2D pixel slicing for structures up to 256 blocks diameter.
               </p>
             </div>
 
@@ -31,10 +32,10 @@ export default function Home() {
                 📐
               </div>
               <h3 className="text-lg font-bold text-slate-900">
-                Layer-by-Layer Building Assistant
+                Layer-by-Layer Survival Blueprints
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Track your building progress in Survival mode with our interactive checklist, layer slider, onion-skin ghosting of lower layers, and precise block material stack counts.
+                Build without guessing in Java or Bedrock. Features interactive layer steps, onion-skin ghosting of lower layers, and exact material stack &amp; Shulker box calculators.
               </p>
             </div>
 
@@ -43,10 +44,10 @@ export default function Home() {
                 ✨
               </div>
               <h3 className="text-lg font-bold text-slate-900">
-                Symmetry Lines &amp; Geodesic Shells
+                Symmetry Arcs &amp; Geodesic Shells
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
-                Generate decorative architectural pillars, colored dome symmetry arcs, and geodesic triangular patterns directly on your voxel structure.
+                Add architectural longitudinal symmetry lines, glass greenhouse struts, and geodesic triangular patterns directly onto your voxel dome.
               </p>
             </div>
 
@@ -54,16 +55,16 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3. SHAPE PRESETS HUB */}
+      {/* 3. SHAPE PRESETS & TOOLS HUB */}
       <section className="py-16 bg-[#fdfbf7] border-b border-stone-200">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10">
           
           <div className="text-center max-w-2xl mx-auto space-y-2">
-            <h2 className="text-3xl font-bold text-slate-900">
-              Minecraft Voxel Shape Generators
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+              Minecraft Voxel Shape &amp; Structure Generators
             </h2>
             <p className="text-xs sm:text-sm text-slate-600">
-              Pick your preferred architectural primitive to generate custom survival building blueprints.
+              Select your required architectural primitive to calculate coordinates, hollow shells, and material requirements.
             </p>
           </div>
 
@@ -72,10 +73,10 @@ export default function Home() {
             <Link href="/" className="bg-white border border-stone-200 p-6 space-y-3 hover:border-blue-500 hover:shadow-xs transition-all group">
               <span className="text-2xl">🏛️</span>
               <h3 className="font-bold text-base text-slate-900 group-hover:text-blue-600 transition-colors">
-                Hollow Dome Generator
+                Minecraft Dome Generator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Generate hemispherical domes for glass planetariums, observatory roofs, and underwater biosphere bases.
+                Generate hemisphere roof layer plans, glass biospheres, observatory domes, and cathedral ceilings.
               </p>
             </Link>
 
@@ -85,7 +86,7 @@ export default function Home() {
                 Minecraft Sphere Generator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Build perfect 3D voxel spheres and ellipsoids with hollow wall thickness controls.
+                Build perfect 3D voxel spheres and ellipsoids with hollow wall thickness controls and 3D rotation.
               </p>
             </Link>
 
@@ -95,7 +96,7 @@ export default function Home() {
                 Minecraft Circle Generator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Generate 2D circle charts and pixel layouts from 3 to 256 blocks wide.
+                Pixel-perfect 2D circle charts and floor layout templates from 3 to 256 blocks diameter.
               </p>
             </Link>
 
@@ -105,7 +106,7 @@ export default function Home() {
                 Minecraft Cone Generator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Create tapered roofs, wizard tower spires, and volcano peak shapes.
+                Create tapered castle spires, wizard towers, cone roofs, and volcanic terrain slopes.
               </p>
             </Link>
 
@@ -115,7 +116,7 @@ export default function Home() {
                 Torus &amp; Donut Ring Generator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Generate rotating orbital ring stations, sci-fi portals, and circular tube tunnels.
+                Plan circular sci-fi stargates, orbital space station rings, and rounded tunnel conduits.
               </p>
             </Link>
 
@@ -125,7 +126,7 @@ export default function Home() {
                 Geodesic Shell Generator
               </h3>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Triangular strut structural shells for modern architectural domes and greenhouse biomes.
+                Triangular strut structural shells for modern architectural domes and botanical biomes.
               </p>
             </Link>
 
@@ -133,77 +134,270 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 4. COMPREHENSIVE BUILDING GUIDE & SEO */}
+      {/* 4. POPULAR DOME & CIRCLE DIMENSION CHART (HIGH SEO VALUE) */}
       <section className="py-16 bg-white border-b border-stone-200">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 text-slate-700 text-sm leading-relaxed">
-          
-          <div className="space-y-3">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center max-w-3xl mx-auto space-y-3">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
-              How to Build Perfect Domes in Minecraft (Step-by-Step)
+              Popular Minecraft Dome Sizes &amp; Material Estimates
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600">
+              Reference chart for common survival dome builds. Quick block requirements for 1-block hollow shell hemispheres.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto border border-stone-200 rounded-none shadow-2xs">
+            <table className="w-full text-left text-xs sm:text-sm border-collapse bg-white">
+              <thead>
+                <tr className="bg-stone-100 border-b border-stone-200 text-slate-900 font-bold">
+                  <th className="p-3 sm:p-4">Diameter (Blocks)</th>
+                  <th className="p-3 sm:p-4">Height (Radius)</th>
+                  <th className="p-3 sm:p-4">Center Type</th>
+                  <th className="p-3 sm:p-4">Hollow Shell Blocks</th>
+                  <th className="p-3 sm:p-4">Stacks (64)</th>
+                  <th className="p-3 sm:p-4">Ideal Project</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-200 text-slate-700">
+                <tr className="hover:bg-stone-50">
+                  <td className="p-3 sm:p-4 font-mono font-bold text-blue-600">11 x 11</td>
+                  <td className="p-3 sm:p-4 font-mono">6 blocks</td>
+                  <td className="p-3 sm:p-4">1x1 (Odd)</td>
+                  <td className="p-3 sm:p-4 font-mono">~180</td>
+                  <td className="p-3 sm:p-4 font-mono">3 stacks</td>
+                  <td className="p-3 sm:p-4">Tower Turret / Small Gazebo</td>
+                </tr>
+                <tr className="hover:bg-stone-50">
+                  <td className="p-3 sm:p-4 font-mono font-bold text-blue-600">15 x 15</td>
+                  <td className="p-3 sm:p-4 font-mono">8 blocks</td>
+                  <td className="p-3 sm:p-4">1x1 (Odd)</td>
+                  <td className="p-3 sm:p-4 font-mono">~340</td>
+                  <td className="p-3 sm:p-4 font-mono">6 stacks</td>
+                  <td className="p-3 sm:p-4">Village House Dome / Windmill Cap</td>
+                </tr>
+                <tr className="hover:bg-stone-50">
+                  <td className="p-3 sm:p-4 font-mono font-bold text-blue-600">20 x 20</td>
+                  <td className="p-3 sm:p-4 font-mono">10 blocks</td>
+                  <td className="p-3 sm:p-4">2x2 (Even)</td>
+                  <td className="p-3 sm:p-4 font-mono">~600</td>
+                  <td className="p-3 sm:p-4 font-mono">10 stacks</td>
+                  <td className="p-3 sm:p-4">Nether Portal Chamber / Greenhouse</td>
+                </tr>
+                <tr className="hover:bg-stone-50">
+                  <td className="p-3 sm:p-4 font-mono font-bold text-blue-600">30 x 30</td>
+                  <td className="p-3 sm:p-4 font-mono">15 blocks</td>
+                  <td className="p-3 sm:p-4">2x2 (Even)</td>
+                  <td className="p-3 sm:p-4 font-mono">~1,350</td>
+                  <td className="p-3 sm:p-4 font-mono">22 stacks (1 chest)</td>
+                  <td className="p-3 sm:p-4">Underwater Biosphere / Base Hub</td>
+                </tr>
+                <tr className="hover:bg-stone-50">
+                  <td className="p-3 sm:p-4 font-mono font-bold text-blue-600">50 x 50</td>
+                  <td className="p-3 sm:p-4 font-mono">25 blocks</td>
+                  <td className="p-3 sm:p-4">2x2 (Even)</td>
+                  <td className="p-3 sm:p-4 font-mono">~3,750</td>
+                  <td className="p-3 sm:p-4 font-mono">59 stacks (2.2 chests)</td>
+                  <td className="p-3 sm:p-4">Major Planetarium / Megabase Dome</td>
+                </tr>
+                <tr className="hover:bg-stone-50">
+                  <td className="p-3 sm:p-4 font-mono font-bold text-blue-600">100 x 100</td>
+                  <td className="p-3 sm:p-4 font-mono">50 blocks</td>
+                  <td className="p-3 sm:p-4">2x2 (Even)</td>
+                  <td className="p-3 sm:p-4 font-mono">~15,100</td>
+                  <td className="p-3 sm:p-4 font-mono">236 stacks (9 chests)</td>
+                  <td className="p-3 sm:p-4">Mega Server Spawn / Survival City</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. IN-DEPTH TUTORIAL & STRATEGY */}
+      <section className="py-16 bg-[#fdfbf7] border-b border-stone-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 text-slate-700 text-sm leading-relaxed">
+          
+          <div className="space-y-4">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
+              How to Build a Minecraft Dome in Survival (Step-by-Step Guide)
             </h2>
             <p>
-              Building rounded structures in Minecraft is challenging because the game world is constructed strictly from cubic 1x1x1 blocks. This generator uses mathematical voxelization algorithms to convert smooth 3D ellipsoidal functions into exact block coordinate layouts.
+              Constructing a rounded dome roof or curved hemisphere in Minecraft requires converting mathematical 3D sphere formulas into a discretized block-by-block grid. Using our 3D dome generator and 2D layer slicer prevents lopsided circles, misaligned heights, and wasted glass or concrete blocks.
             </p>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-900">1. Prepare Your Materials and Floor Center</h3>
-            <p>
-              Check the <strong>Total Materials</strong> counter on this page before you start. For instance, a 30-block diameter hollow glass dome requires approximately <strong>1,200 glass blocks (19 stacks)</strong>. Mark your center block (odd diameter) or 2x2 center (even diameter) on your build platform.
-            </p>
+          {/* Steps */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="bg-white border border-stone-200 p-6 space-y-3">
+              <div className="text-blue-600 font-extrabold text-sm flex items-center gap-2">
+                <span>STEP 01</span>
+                <span className="w-8 h-0.5 bg-blue-200"></span>
+              </div>
+              <h3 className="font-bold text-base text-slate-900">Choose Diameter &amp; Calculate Center</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Determine if your build requires an odd diameter (1x1 center block for centered doorways) or an even diameter (2x2 center block for double doors and wide roads). Place a placeholder block at the exact center of your build site.
+              </p>
+            </div>
+
+            <div className="bg-white border border-stone-200 p-6 space-y-3">
+              <div className="text-blue-600 font-extrabold text-sm flex items-center gap-2">
+                <span>STEP 02</span>
+                <span className="w-8 h-0.5 bg-blue-200"></span>
+              </div>
+              <h3 className="font-bold text-base text-slate-900">Gather Materials with Stack Calculator</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Check our live material counter before starting. For example, building a 30-block diameter glass dome requires 22 full 64-stacks of glass. Prepare your scaffolds (Dirt, Scaffolding, or Water Buckets) to reach higher levels.
+              </p>
+            </div>
+
+            <div className="bg-white border border-stone-200 p-6 space-y-3">
+              <div className="text-blue-600 font-extrabold text-sm flex items-center gap-2">
+                <span>STEP 03</span>
+                <span className="w-8 h-0.5 bg-blue-200"></span>
+              </div>
+              <h3 className="font-bold text-base text-slate-900">Lay Foundation with 2D Layer 1</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                Switch to the <strong>2D Layer View</strong>. Set the layer slider to Layer 1. Lay down the outermost perimeter ring. Verify the four cardinal points (North, South, East, West) match the diameter coordinates before moving upwards.
+              </p>
+            </div>
+
+            <div className="bg-white border border-stone-200 p-6 space-y-3">
+              <div className="text-blue-600 font-extrabold text-sm flex items-center gap-2">
+                <span>STEP 04</span>
+                <span className="w-8 h-0.5 bg-blue-200"></span>
+              </div>
+              <h3 className="font-bold text-base text-slate-900">Stack Layers Using Ghosted Onion-Skin</h3>
+              <p className="text-xs text-slate-600 leading-relaxed">
+                As you advance to Layer 2, Layer 3, and beyond, use the ghosted blue outline of the previous layer to know exactly which blocks step inward or upward. Click <strong>Mark Built</strong> on each layer to track your progress.
+              </p>
+            </div>
           </div>
 
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-900">2. Follow the 2D Layer-by-Layer Blueprints</h3>
-            <p>
-              Set the 2D View to <strong>Top View</strong>. Start at <strong>Layer 1</strong>, lay the foundation ring, and click <strong>Mark Built</strong>. Advance to Layer 2 and observe the ghosted lower layer (onion-skin) to easily know where to place the next ring of blocks.
+          {/* Best Practices Banner */}
+          <div className="p-6 bg-white border border-blue-200 space-y-3">
+            <h3 className="text-base font-bold text-slate-900 flex items-center gap-2">
+              <span className="text-blue-600">💡</span> Pro Tip: Glass Domes &amp; Underwater Biospheres
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-600 leading-relaxed">
+              When creating underwater biospheres in ocean biomes, build the exterior glass dome first using a 1-block hollow shell. Once the dome is sealed, use Sponges or fill the interior with sand/gravel and dig it out to quickly clear the water.
             </p>
-          </div>
-
-          <div className="space-y-4">
-            <h3 className="text-xl font-bold text-slate-900">3. Even vs. Odd Diameters</h3>
-            <ul className="list-disc list-inside space-y-1.5 pl-2 text-xs sm:text-sm">
-              <li><strong>Odd Diameter (e.g., 29, 31, 33):</strong> Has a single 1x1 center block. Ideal for centered doors, pathways, and beacon beams.</li>
-              <li><strong>Even Diameter (e.g., 30, 32, 34):</strong> Has a 2x2 center block. Ideal for double doors and symmetrical road grids.</li>
-            </ul>
           </div>
 
         </div>
       </section>
 
-      {/* 5. FAQ SECTION */}
+      {/* 6. COMPARISON TABLE: WHY MINECRAFTDOMEGENERATOR.CYOU */}
+      <section className="py-16 bg-white border-b border-stone-200">
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
+          <div className="text-center space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
+              Why Builders Choose MinecraftDomeGenerator.cyou
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-600">
+              Compare our modern client-side WebGL engine with legacy tools like Plotz and classic circle charts.
+            </p>
+          </div>
+
+          <div className="overflow-x-auto border border-stone-200 rounded-none">
+            <table className="w-full text-left text-xs sm:text-sm border-collapse bg-white">
+              <thead>
+                <tr className="bg-stone-100 border-b border-stone-200 text-slate-900 font-bold">
+                  <th className="p-3 sm:p-4">Feature</th>
+                  <th className="p-3 sm:p-4 text-blue-600">MinecraftDomeGenerator.cyou</th>
+                  <th className="p-3 sm:p-4 text-slate-500">Plotz / Legacy Modellers</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-stone-200 text-slate-700">
+                <tr>
+                  <td className="p-3 sm:p-4 font-medium">Rendering Speed</td>
+                  <td className="p-3 sm:p-4 text-emerald-600 font-semibold">Instant WebGL (60 FPS)</td>
+                  <td className="p-3 sm:p-4 text-slate-500">Laggy Flash / CPU Canvas</td>
+                </tr>
+                <tr>
+                  <td className="p-3 sm:p-4 font-medium">Onion-Skinning (Ghost Layer)</td>
+                  <td className="p-3 sm:p-4 text-emerald-600 font-semibold">Yes (Ghosted lower layer)</td>
+                  <td className="p-3 sm:p-4 text-slate-500">No</td>
+                </tr>
+                <tr>
+                  <td className="p-3 sm:p-4 font-medium">Symmetry Lines &amp; Ribs</td>
+                  <td className="p-3 sm:p-4 text-emerald-600 font-semibold">Configurable Count &amp; Rotation</td>
+                  <td className="p-3 sm:p-4 text-slate-500">Not supported</td>
+                </tr>
+                <tr>
+                  <td className="p-3 sm:p-4 font-medium">Mobile &amp; Tablet Support</td>
+                  <td className="p-3 sm:p-4 text-emerald-600 font-semibold">Fully responsive touch controls</td>
+                  <td className="p-3 sm:p-4 text-slate-500">Desktop only / broken zoom</td>
+                </tr>
+                <tr>
+                  <td className="p-3 sm:p-4 font-medium">Privacy &amp; Offline Ready</td>
+                  <td className="p-3 sm:p-4 text-emerald-600 font-semibold">100% Client-side (No server tracking)</td>
+                  <td className="p-3 sm:p-4 text-slate-500">Ad-heavy server queries</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      {/* 7. COMPREHENSIVE FAQ SECTION (TARGETING SERP & PAA) */}
       <section id="faq" className="py-16 bg-[#fdfbf7]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="text-center space-y-2">
             <h2 className="text-3xl font-bold text-slate-900">
-              Frequently Asked Questions (FAQ)
+              Frequently Asked Questions
             </h2>
             <p className="text-xs sm:text-sm text-slate-500">
-              Everything you need to know about generating voxel domes and shapes in Minecraft.
+              Common questions about Minecraft dome blueprints, sphere modeling, and circle math.
             </p>
           </div>
 
           <div className="space-y-4 text-xs sm:text-sm">
+            
             <div className="bg-white border border-stone-200 p-5 space-y-2">
-              <h3 className="font-bold text-base text-slate-900">Can I build domes in Minecraft Survival mode without mods?</h3>
+              <h3 className="font-bold text-base text-slate-900">
+                How to generate a dome in Minecraft?
+              </h3>
               <p className="text-slate-600 leading-relaxed">
-                Yes! Our 2D layer slicer is built specifically for vanilla survival players. You don&apos;t need WorldEdit, Litematica, or any client mods—simply follow the layer numbers on your second monitor or phone while placing blocks.
+                To generate a dome, enter your base diameter (e.g. 30 blocks) and height (e.g. 15 blocks) into our interactive 3D generator above. The tool automatically computes the optimal voxel hemisphere and gives you a 2D layer-by-layer blueprint that you can follow directly in vanilla Minecraft Java or Bedrock Edition.
               </p>
             </div>
 
             <div className="bg-white border border-stone-200 p-5 space-y-2">
-              <h3 className="font-bold text-base text-slate-900">How do hollow domes work?</h3>
+              <h3 className="font-bold text-base text-slate-900">
+                How do I make a 50x50 circle or dome in Minecraft?
+              </h3>
               <p className="text-slate-600 leading-relaxed">
-                By selecting <strong>1 Block Hollow Shell</strong>, the generator removes all inner blocks, leaving only a 1-block thick outer skin. This saves thousands of blocks and provides maximum usable interior space for your base.
+                Set the Diameter slider to <strong>50</strong>. Because 50 is an even number, your dome has a 2x2 block center. A 50-block hollow dome requires approximately 3,750 blocks (59 stacks of 64). Switch to the 2D Top View and place the outer blocks layer-by-layer starting from Layer 1 up to Layer 25.
               </p>
             </div>
 
             <div className="bg-white border border-stone-200 p-5 space-y-2">
-              <h3 className="font-bold text-base text-slate-900">What are symmetry lines used for?</h3>
+              <h3 className="font-bold text-base text-slate-900">
+                Can I build domes in Minecraft Survival mode without mods or WorldEdit?
+              </h3>
               <p className="text-slate-600 leading-relaxed">
-                Symmetry lines render colored vertical arcs (pillars) along the dome shell. You can use different colored blocks (such as Deepslate or Copper) to create stunning stained-glass patterns and reinforced arch supports.
+                Yes! Our tool was designed for vanilla survival players. You do not need WorldEdit, Axiom, or Litematica. You can open the 2D blueprint on a second monitor, tablet, or smartphone while placing blocks in your survival world.
               </p>
             </div>
+
+            <div className="bg-white border border-stone-200 p-5 space-y-2">
+              <h3 className="font-bold text-base text-slate-900">
+                What is the difference between a hollow dome and a solid dome?
+              </h3>
+              <p className="text-slate-600 leading-relaxed">
+                A <strong>1-Block Hollow Dome</strong> only places blocks on the outermost perimeter shell, leaving the inside completely open for your base interior. A solid dome fills all inner coordinates, which requires 10x more blocks and is usually only needed for terraforming or solid terrain mounds.
+              </p>
+            </div>
+
+            <div className="bg-white border border-stone-200 p-5 space-y-2">
+              <h3 className="font-bold text-base text-slate-900">
+                How do symmetry lines help when building glass domes?
+              </h3>
+              <p className="text-slate-600 leading-relaxed">
+                Symmetry lines project colored longitudinal arcs (ribs) along the dome shell. By setting the line count to 4, 6, or 8, you can replace specific glass blocks with Dark Prismarine, Copper, or Deepslate to create decorative arches and cathedral ribs.
+              </p>
+            </div>
+
           </div>
         </div>
       </section>

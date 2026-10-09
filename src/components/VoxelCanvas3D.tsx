@@ -47,31 +47,30 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     // 2. Camera setup
     const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 1000);
     cameraRef.current = camera;
+    scene.add(camera);
 
-    // 3. Renderer with antialiasing and high DPR
+    // 3. Renderer with antialiasing and proper sRGB color space for vibrant colors
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: false, preserveDrawingBuffer: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    renderer.shadowMap.enabled = false;
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.NoToneMapping;
     container.innerHTML = '';
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // 4. Studio Lighting for crisp voxel contrast
-    const hemiLight = new THREE.HemisphereLight(0xffffff, 0xdfe3e8, 0.7);
-    scene.add(hemiLight);
+    // 4. Vibrant Studio Headlight Setup (ensures colors are never dull or shadowed)
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    scene.add(ambientLight);
 
-    const dirLight1 = new THREE.DirectionalLight(0xffffff, 0.75);
-    dirLight1.position.set(60, 100, 60);
-    scene.add(dirLight1);
+    // Camera headlight ensures face colors stay bright from whatever angle you orbit
+    const headlight = new THREE.DirectionalLight(0xffffff, 0.45);
+    headlight.position.set(0, 0, 1);
+    camera.add(headlight);
 
-    const dirLight2 = new THREE.DirectionalLight(0xffffff, 0.4);
-    dirLight2.position.set(-60, 40, -60);
-    scene.add(dirLight2);
-
-    const dirLight3 = new THREE.DirectionalLight(0xffffff, 0.25);
-    dirLight3.position.set(0, -50, 0); // Subtle under-lighting for 360 underside view
-    scene.add(dirLight3);
+    const topLight = new THREE.DirectionalLight(0xffffff, 0.25);
+    topLight.position.set(20, 50, 20);
+    scene.add(topLight);
 
     // 5. Clean minimalist ground grid
     const maxDim = Math.max(model.diameterX, model.diameterZ, 30);
@@ -106,7 +105,6 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       ctrl.prevY = e.clientY;
 
       if (ctrl.isPanning) {
-        // Pan Target
         const panSpeed = ctrl.radius * 0.0015;
         const forward = new THREE.Vector3();
         camera.getWorldDirection(forward);
@@ -114,9 +112,8 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
         ctrl.targetCenter.addScaledVector(right, -dx * panSpeed);
         ctrl.targetCenter.y += dy * panSpeed;
       } else {
-        // Full 360-degree Orbit (No artificial ceiling clamp)
+        // Full 360-degree Orbit
         ctrl.targetTheta -= dx * 0.008;
-        // Allows viewing from straight top (0.02) to under the base (Math.PI - 0.05)
         ctrl.targetPhi = Math.max(0.02, Math.min(Math.PI - 0.05, ctrl.targetPhi - dy * 0.008));
       }
     };
@@ -143,18 +140,16 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     dom.addEventListener('wheel', onWheel, { passive: false });
     dom.addEventListener('contextmenu', (e) => e.preventDefault());
 
-    // 8. Animation loop with buttery smooth damping (lerp)
+    // 8. Animation loop with buttery smooth damping
     const animate = () => {
       animFrameRef.current = requestAnimationFrame(animate);
 
-      // Smooth interpolation
       const damp = 0.12;
       ctrl.theta += (ctrl.targetTheta - ctrl.theta) * damp;
       ctrl.phi += (ctrl.targetPhi - ctrl.phi) * damp;
       ctrl.radius += (ctrl.targetRadius - ctrl.radius) * damp;
       ctrl.target.lerp(ctrl.targetCenter, damp);
 
-      // Spherical to Cartesian coordinate transformation
       camera.position.x = ctrl.target.x + ctrl.radius * Math.sin(ctrl.phi) * Math.sin(ctrl.theta);
       camera.position.y = ctrl.target.y + ctrl.radius * Math.cos(ctrl.phi);
       camera.position.z = ctrl.target.z + ctrl.radius * Math.sin(ctrl.phi) * Math.cos(ctrl.theta);
@@ -186,16 +181,14 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     };
   }, [model.diameterX, model.diameterZ, model.height]);
 
-  // 9. Voxel Mesh Generation with Clean Beveled Edges
+  // 9. Voxel Mesh Generation with Vibrant Voxel Materials & Seam Edges
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
 
-    // Clear old mesh
     const existing = scene.getObjectByName('voxelMesh');
     if (existing) scene.remove(existing);
 
-    // Filter active voxels
     let activeVoxels = model.voxels;
     if (renderMode === 'upToCurrent') {
       activeVoxels = model.voxels.filter((v) => v.y <= currentLayer);
@@ -205,11 +198,11 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
 
     if (activeVoxels.length === 0) return;
 
-    // InstancedMesh with clean BoxGeometry (0.95 unit size provides sharp 3D voxel grid seams)
-    const boxGeo = new THREE.BoxGeometry(0.95, 0.95, 0.95);
+    // 0.94 box size ensures crisp, defined 3D voxel block edges
+    const boxGeo = new THREE.BoxGeometry(0.94, 0.94, 0.94);
+    // MeshLambertMaterial with rich ambient response reproduces exact vivid 2D colors
     const boxMat = new THREE.MeshLambertMaterial({
       vertexColors: false,
-      reflectivity: 0.2,
     });
 
     const instancedMesh = new THREE.InstancedMesh(boxGeo, boxMat, activeVoxels.length);
@@ -223,12 +216,8 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       dummy.updateMatrix();
       instancedMesh.setMatrixAt(i, dummy.matrix);
 
+      // Convert hex color directly into sRGB color space
       color.set(voxel.color);
-
-      // Highlight active layer slightly
-      if (voxel.y === currentLayer) {
-        color.offsetHSL(0, 0, 0.05);
-      }
       instancedMesh.setColorAt(i, color);
     });
 

@@ -145,7 +145,7 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="en" className="dark-theme scroll-smooth" suppressHydrationWarning>
+    <html lang="en" className="light-theme scroll-smooth" suppressHydrationWarning>
       <head>
         <script
           type="application/ld+json"

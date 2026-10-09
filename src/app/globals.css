@@ -1,6 +1,16 @@
 @import "tailwindcss";
 
 :root {
+  --bg-color: #f8f9fa;
+  --text-color: #111827;
+  --card-bg: #ffffff;
+  --panel-bg: #ffffff;
+  --border-color: #e2e8f0;
+  --selection-bg: #2563eb;
+  --selection-text: #ffffff;
+}
+
+html.dark-theme {
   --bg-color: #111418;
   --text-color: #f3f4f6;
   --card-bg: #181d24;

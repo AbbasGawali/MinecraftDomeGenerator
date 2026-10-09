@@ -15,32 +15,29 @@ export default function PrivacyPage() {
     <div className="max-w-3xl mx-auto px-4 py-12">
       <Link
         href="/"
-        className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 mb-8 transition font-medium text-sm"
+        className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 mb-8 transition font-medium text-xs uppercase tracking-wider"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Generator
       </Link>
 
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-6">
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-6">
         Privacy Policy
       </h1>
 
-      <div className="prose prose-invert max-w-none text-zinc-300 space-y-4 text-sm leading-relaxed">
-        <p className="text-zinc-400 text-xs">Last Updated: October 2026</p>
+      <div className="space-y-5 text-xs sm:text-sm text-zinc-300 leading-relaxed">
+        <p className="text-zinc-500 text-xs">Last Updated: October 2026</p>
 
-        <h2 className="text-xl font-bold text-white mt-6">1. Client-Side Architecture</h2>
-        <p>
-          MinecraftDomeGenerator.cyou operates primarily as a client-side web application. All voxel computations, 3D instanced rendering, 2D slicing, and blueprint exports happen in your local browser runtime. We do not store or transmit your custom build dimensions or layer progress to our servers.
-        </p>
+        <div className="p-5 rounded-sm bg-[#181d24] border border-[#2d3540] space-y-4">
+          <h2 className="text-sm font-bold text-white">1. Client-Side Processing</h2>
+          <p>
+            MinecraftDomeGenerator.cyou runs 100% inside your browser runtime. We do not store or transmit your custom structure dimensions, layer build progress, or schematics to remote servers.
+          </p>
 
-        <h2 className="text-xl font-bold text-white mt-6">2. Cookies and Analytics</h2>
-        <p>
-          We may use minimal, privacy-friendly analytics and local storage (such as remembering your active color palette or completed layer checkmarks) solely to enhance your user experience. We do not sell your personal data or track you across third-party websites.
-        </p>
-
-        <h2 className="text-xl font-bold text-white mt-6">3. Third-Party Links</h2>
-        <p>
-          Our guides may link to official resources (such as Minecraft.net or community wikis). We are not responsible for the privacy practices of external websites.
-        </p>
+          <h2 className="text-sm font-bold text-white pt-2">2. Local Preferences</h2>
+          <p>
+            Your browser may use local storage to remember your preferred color palette or active build layer. This data stays entirely on your local machine.
+          </p>
+        </div>
       </div>
     </div>
   );

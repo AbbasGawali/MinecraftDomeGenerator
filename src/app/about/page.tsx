@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { ArrowLeft, Box, Shield, Zap, Sparkles } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 
 export const metadata: Metadata = {
   title: 'About | Minecraft Dome & Shape Generator',
@@ -15,36 +15,38 @@ export default function AboutPage() {
     <div className="max-w-3xl mx-auto px-4 py-12">
       <Link
         href="/"
-        className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 mb-8 transition font-medium text-sm"
+        className="inline-flex items-center gap-2 text-emerald-400 hover:text-emerald-300 mb-8 transition font-medium text-xs uppercase tracking-wider"
       >
         <ArrowLeft className="w-4 h-4" /> Back to Generator
       </Link>
 
-      <h1 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight mb-6">
+      <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight mb-6">
         About Minecraft Dome Generator
       </h1>
 
-      <div className="prose prose-invert max-w-none text-zinc-300 space-y-6 leading-relaxed">
-        <p>
-          <strong>MinecraftDomeGenerator.cyou</strong> was built to solve a classic Minecraft problem: building organic, curved shapes like domes, spheres, cones, and geodesics in a voxel grid without guessing or wasting hours tearing down mismatched blocks.
-        </p>
+      <div className="space-y-6 text-xs sm:text-sm text-zinc-300 leading-relaxed">
+        <div className="p-5 rounded-sm bg-[#181d24] border border-[#2d3540] space-y-3">
+          <p>
+            <strong className="text-white font-bold">MinecraftDomeGenerator.cyou</strong> is a dedicated 100% client-side 3D voxel blueprint generator built for Minecraft builders, redstone engineers, and survival players.
+          </p>
+          <p>
+            It eliminates the frustration of guessing curved spherical roofs, uneven circle foundations, and distorted cones by providing mathematical voxel precision directly in your browser.
+          </p>
+        </div>
 
-        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Why We Built This</h2>
-        <p>
-          Many classic tools are slow, dated, cluttered with heavy ads, or require server-side rendering that stutters on large builds. We rebuilt the experience from the ground up with:
-        </p>
-
-        <ul className="list-disc list-inside space-y-2 text-zinc-300">
-          <li><strong>100% Client-Side Engine:</strong> Instant Three.js instanced rendering capable of processing thousands of voxels at 60 FPS directly in your browser.</li>
-          <li><strong>Zero Data Tracking:</strong> Your designs and custom dimensions never leave your device.</li>
-          <li><strong>Survival-Ready Assistants:</strong> Layer-by-layer 2D slicing with onion skinning, block stack calculators (chests, shulkers, 64-stacks), and printable blueprints.</li>
-          <li><strong>Complex Symmetry Lines:</strong> Configurable longitudinal strut overlays for creating glass greenhouse domes, observatories, and stargate portals.</li>
+        <h2 className="text-lg font-bold text-white pt-4">Core Principles</h2>
+        <ul className="list-disc list-inside space-y-2 text-zinc-400">
+          <li><strong className="text-zinc-200">Zero Server Lag:</strong> Instant 3D instanced rendering runs completely on your local device.</li>
+          <li><strong className="text-zinc-200">Vanilla Survival Friendly:</strong> No WorldEdit or mods required. Follow layer-by-layer blueprints on any screen.</li>
+          <li><strong className="text-zinc-200">Privacy First:</strong> Your builds and custom dimensions are never stored on external servers.</li>
         </ul>
 
-        <h2 className="text-2xl font-bold text-white mt-8 mb-4">Disclaimer &amp; Trademark Notice</h2>
-        <p className="text-sm text-zinc-400">
-          Minecraft is a trademark of Mojang Synergies AB / Microsoft Corporation. MinecraftDomeGenerator.cyou is an independent community fan project and is not affiliated with, endorsed by, or associated with Mojang or Microsoft.
-        </p>
+        <div className="pt-6 border-t border-[#262e38]">
+          <h3 className="text-xs font-bold text-zinc-400 uppercase tracking-wider mb-2">Disclaimer</h3>
+          <p className="text-xs text-zinc-500">
+            Minecraft is a registered trademark of Mojang Synergies AB / Microsoft. This tool is an independent fan project.
+          </p>
+        </div>
       </div>
     </div>
   );

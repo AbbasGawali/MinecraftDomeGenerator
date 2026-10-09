@@ -42,7 +42,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     if (!container) return;
 
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color('#ffffff');
+    scene.background = new THREE.Color('#14181d'); // Sleek Minecraft Dark Void
     sceneRef.current = scene;
 
     const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 1000);
@@ -56,7 +56,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
       preserveDrawingBuffer: false,
     });
     renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5)); // Cap DPR to 1.5 for buttery performance
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.NoToneMapping;
     container.innerHTML = '';
@@ -64,19 +64,19 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     rendererRef.current = renderer;
 
     // Lights
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.9);
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.85);
     scene.add(ambientLight);
 
     const headlight = new THREE.DirectionalLight(0xffffff, 0.45);
     headlight.position.set(0, 0, 1);
     camera.add(headlight);
 
-    const topLight = new THREE.DirectionalLight(0xffffff, 0.25);
+    const topLight = new THREE.DirectionalLight(0xffffff, 0.3);
     topLight.position.set(20, 50, 20);
     scene.add(topLight);
 
     // Dynamic grid helper
-    const grid = new THREE.GridHelper(60, 60, 0x94a3b8, 0xe2e8f0);
+    const grid = new THREE.GridHelper(60, 60, 0x3b4450, 0x21272f);
     grid.position.y = -0.5;
     scene.add(grid);
     gridHelperRef.current = grid;
@@ -141,7 +141,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     dom.addEventListener('wheel', onWheel, { passive: false });
     dom.addEventListener('contextmenu', (e) => e.preventDefault());
 
-    // Intelligent Render Loop (Only renders when moving or dirty to maintain 0% idle CPU)
+    // Intelligent Render Loop (Zero CPU when idle)
     let idleFrames = 0;
     const animate = () => {
       animFrameRef.current = requestAnimationFrame(animate);
@@ -200,7 +200,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     };
   }, []);
 
-  // 2. Camera Fit upon Model Dimensions Change
+  // 2. Camera Fit
   useEffect(() => {
     const ctrl = ctrlRef.current;
     const modelHeight = model.height || 15;
@@ -208,14 +208,13 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     ctrl.targetRadius = initialRadius;
     ctrl.targetCenter.set(0, modelHeight * 0.4, 0);
 
-    // Update ground grid size
     const scene = sceneRef.current;
     if (scene && gridHelperRef.current) {
       scene.remove(gridHelperRef.current);
       gridHelperRef.current.geometry.dispose();
       const maxDim = Math.max(model.diameterX, model.diameterZ, 30);
       const gridSize = Math.ceil(maxDim * 1.6);
-      const newGrid = new THREE.GridHelper(gridSize, gridSize, 0x94a3b8, 0xe2e8f0);
+      const newGrid = new THREE.GridHelper(gridSize, gridSize, 0x3b4450, 0x21272f);
       newGrid.position.y = -0.5;
       scene.add(newGrid);
       gridHelperRef.current = newGrid;
@@ -224,7 +223,7 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
     isNeedsRenderRef.current = true;
   }, [model.diameterX, model.diameterZ, model.height]);
 
-  // 3. Fast InstancedMesh Update (Re-uses single geometry & material)
+  // 3. Fast InstancedMesh Update
   useEffect(() => {
     const scene = sceneRef.current;
     if (!scene) return;
@@ -276,21 +275,21 @@ export default function VoxelCanvas3D({ model, currentLayer, renderMode }: Props
   }, [model, currentLayer, renderMode]);
 
   return (
-    <div className="relative w-full h-full min-h-[460px] bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden flex flex-col">
+    <div className="relative w-full h-full min-h-[460px] bg-[#14181d] rounded-xl border border-[#2d3540] overflow-hidden flex flex-col shadow-inner">
       <div
         ref={mountRef}
         className="w-full h-full flex-1 cursor-grab active:cursor-grabbing select-none touch-none"
         title="Left click + drag to rotate 360° • Right click + drag to pan • Scroll to zoom"
       />
 
-      {/* Floating Minimalist 3D HUD */}
-      <div className="absolute bottom-3 left-3 bg-white/90 backdrop-blur-md px-3 py-1.5 rounded-lg border border-stone-200 text-[11px] font-medium text-slate-600 shadow-2xs pointer-events-none flex items-center gap-2">
-        <span className="w-2 h-2 rounded-full bg-emerald-500"></span>
-        <span>Drag to orbit 360° • Scroll to zoom</span>
+      {/* Floating Dark HUD */}
+      <div className="absolute bottom-3 left-3 bg-[#1c2229]/90 backdrop-blur-md px-3 py-1.5 rounded-sm border border-[#3b4450] text-[11px] font-semibold text-zinc-300 pointer-events-none flex items-center gap-2">
+        <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
+        <span>Drag 360° • Scroll to zoom</span>
       </div>
 
-      <div className="absolute top-3 right-3 bg-white/90 backdrop-blur-md px-2.5 py-1 rounded-lg border border-stone-200 text-[11px] font-semibold text-slate-700 shadow-2xs pointer-events-none">
-        {model.totalBlocks.toLocaleString()} voxels
+      <div className="absolute top-3 right-3 bg-[#1c2229]/90 backdrop-blur-md px-2.5 py-1 rounded-sm border border-[#3b4450] text-[11px] font-mono font-bold text-emerald-400 pointer-events-none">
+        {model.totalBlocks.toLocaleString()} blocks
       </div>
     </div>
   );

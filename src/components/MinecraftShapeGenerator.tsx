@@ -3,8 +3,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import VoxelCanvas3D from './VoxelCanvas3D';
 import LayerCanvas2D from './LayerCanvas2D';
-import { generateVoxels, ShapeConfig, ShapeType, COLOR_PALETTES } from '@/lib/voxelEngine';
-import { Layers, Settings, Share2, Printer, RotateCcw, Check, Sun, Moon, Info, X, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { generateVoxels, ShapeConfig, ShapeType } from '@/lib/voxelEngine';
+import { Layers, Settings, Share2, Printer, RotateCcw, Check, X, ChevronRight, Sparkles } from 'lucide-react';
 import Link from 'next/link';
 
 export default function MinecraftShapeGenerator() {
@@ -99,7 +99,6 @@ export default function MinecraftShapeGenerator() {
 
   const maxSliderValue = allowLargeSizes ? 256 : 64;
 
-  // Stacks calculation
   const totalBlocks = model.totalBlocks;
   const stacks64 = Math.floor(totalBlocks / 64);
   const remainderBlocks = totalBlocks % 64;
@@ -107,36 +106,30 @@ export default function MinecraftShapeGenerator() {
 
   return (
     <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
-      {/* 1. MINIMALIST TOP HEADER */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-stone-200">
+      {/* Top Title Banner */}
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b border-[#2d3540]">
         <div>
-          <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-            Minecraft Shape Generator
+          <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight flex items-center gap-2.5">
+            <span className="text-emerald-400">❖</span> Minecraft Shape Generator
           </h1>
-          <p className="text-sm text-slate-500 mt-1">
-            Visualize domes, cones, and layers with on-canvas controls.
+          <p className="text-xs sm:text-sm text-zinc-400 mt-1">
+            Build perfect hollow domes, spheres, and roofs with 3D orbit inspection and 2D layer slicer.
           </p>
         </div>
 
-        <div className="flex items-center gap-3 self-end md:self-auto">
-          <Link
-            href="/about"
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-slate-700 bg-white border border-stone-200 hover:bg-stone-50 hover:border-stone-300 transition-all shadow-2xs"
-          >
-            About
-          </Link>
+        <div className="flex items-center gap-3">
           <button
             onClick={() => setShowExportModal(true)}
-            className="px-5 py-2 rounded-xl text-xs font-semibold text-white bg-blue-600 hover:bg-blue-500 active:bg-blue-700 transition-all shadow-xs flex items-center gap-2"
+            className="mc-button-green px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-sm flex items-center gap-2"
           >
-            <Share2 className="w-3.5 h-3.5" /> Export...
+            <Share2 className="w-3.5 h-3.5" /> Export Blueprint
           </button>
         </div>
       </div>
 
-      {/* 2. THREE-PANEL CORE INTERFACE */}
+      {/* Main 3-Panel Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-        {/* VIEW AREA (3D & 2D CANVASES) */}
+        {/* VIEW AREA */}
         <div
           className={`grid gap-6 ${
             viewMode === 'both'
@@ -144,7 +137,6 @@ export default function MinecraftShapeGenerator() {
               : 'lg:col-span-8 grid-cols-1'
           }`}
         >
-          {/* 3D Interactive Canvas */}
           {(viewMode === 'both' || viewMode === '3d') && (
             <div className="w-full h-[520px]">
               <VoxelCanvas3D
@@ -155,7 +147,6 @@ export default function MinecraftShapeGenerator() {
             </div>
           )}
 
-          {/* 2D Layer Slicer Canvas */}
           {(viewMode === 'both' || viewMode === '2d') && (
             <div className="w-full h-[520px]">
               <LayerCanvas2D
@@ -168,29 +159,29 @@ export default function MinecraftShapeGenerator() {
           )}
         </div>
 
-        {/* CONTROLS & SETTINGS SIDEBAR */}
-        <div className="lg:col-span-4 w-full bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden flex flex-col">
+        {/* SIDEBAR CONTROLS */}
+        <div className="lg:col-span-4 w-full bg-[#181d24] rounded-xl border border-[#2d3540] overflow-hidden flex flex-col shadow-xl">
           {/* TAB HEADER */}
-          <div className="grid grid-cols-2 border-b border-stone-200 bg-stone-50/60 p-1.5 gap-1.5">
-            <button
-              onClick={() => setActiveTab('layers')}
-              className={`py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
-                activeTab === 'layers'
-                  ? 'bg-white text-blue-600 shadow-xs border border-stone-200/80'
-                  : 'text-slate-600 hover:text-slate-900'
-              }`}
-            >
-              <Layers className="w-3.5 h-3.5" /> Layers
-            </button>
+          <div className="grid grid-cols-2 border-b border-[#2d3540] bg-[#14181d] p-1.5 gap-1.5">
             <button
               onClick={() => setActiveTab('shape')}
-              className={`py-2 px-4 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-2 ${
+              className={`py-2 px-3 rounded-xs text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
                 activeTab === 'shape'
-                  ? 'bg-white text-blue-600 shadow-xs border border-stone-200/80'
-                  : 'text-slate-600 hover:text-slate-900'
+                  ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
+                  : 'text-zinc-400 hover:text-white'
               }`}
             >
-              <Settings className="w-3.5 h-3.5" /> Shape Settings
+              <Settings className="w-3.5 h-3.5" /> Shape Config
+            </button>
+            <button
+              onClick={() => setActiveTab('layers')}
+              className={`py-2 px-3 rounded-xs text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-2 ${
+                activeTab === 'layers'
+                  ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
+                  : 'text-zinc-400 hover:text-white'
+              }`}
+            >
+              <Layers className="w-3.5 h-3.5" /> Layer Tracker
             </button>
           </div>
 
@@ -199,81 +190,83 @@ export default function MinecraftShapeGenerator() {
             {/* TAB 1: SHAPE SETTINGS */}
             {activeTab === 'shape' && (
               <div className="space-y-6">
-                {/* Shape Configuration */}
+                {/* Shape Selection */}
                 <div className="space-y-3">
-                  <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wider">
-                    Shape Configuration
-                  </h3>
+                  <div className="text-[11px] font-bold text-zinc-400 uppercase tracking-wider">
+                    Base Primitive
+                  </div>
 
-                  {/* Radio Shape Selection */}
-                  <div className="space-y-2">
-                    <label className="flex items-center gap-2.5 text-xs font-semibold text-slate-800 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="shape"
-                        checked={shape === 'dome'}
-                        onChange={() => setShape('dome')}
-                        className="w-4 h-4 text-blue-600 border-stone-300 focus:ring-blue-500"
-                      />
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => setShape('dome')}
+                      className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
+                        shape === 'dome'
+                          ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                          : 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                      }`}
+                    >
                       <span>Dome (rounded)</span>
-                    </label>
-                    <label className="flex items-center gap-2.5 text-xs font-semibold text-slate-800 cursor-pointer">
-                      <input
-                        type="radio"
-                        name="shape"
-                        checked={shape === 'cone'}
-                        onChange={() => setShape('cone')}
-                        className="w-4 h-4 text-blue-600 border-stone-300 focus:ring-blue-500"
-                      />
+                      {shape === 'dome' && <Check className="w-4 h-4 text-emerald-400" />}
+                    </button>
+
+                    <button
+                      onClick={() => setShape('cone')}
+                      className={`p-2.5 rounded-sm text-xs font-bold text-left transition flex items-center justify-between border ${
+                        shape === 'cone'
+                          ? 'bg-[#202934] border-emerald-500 text-emerald-300'
+                          : 'bg-[#14181d] border-[#2d3540] text-zinc-300 hover:bg-[#1c222a]'
+                      }`}
+                    >
                       <span>Cone (tapered)</span>
-                    </label>
+                      {shape === 'cone' && <Check className="w-4 h-4 text-emerald-400" />}
+                    </button>
                   </div>
                 </div>
 
-                {/* Additional Shape Flags */}
-                <div className="space-y-3 pt-2 border-t border-stone-100">
-                  <label className="flex items-start gap-2.5 text-xs text-slate-700 cursor-pointer">
+                {/* Additional Options */}
+                <div className="space-y-3 pt-2 border-t border-[#262e38]">
+                  <label className="flex items-start gap-2.5 text-xs text-zinc-300 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={smoothCurve}
                       onChange={(e) => setSmoothCurve(e.target.checked)}
-                      className="w-4 h-4 rounded text-blue-600 border-stone-300 mt-0.5 focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] mt-0.5 rounded-xs"
                     />
                     <div>
-                      <div className="font-semibold text-slate-800">Smooth Curve (half slabs)</div>
-                      <div className="text-[11px] text-slate-500">
-                        Uses lower/upper slabs near the surface to soften the dome/cone outline.
+                      <div className="font-bold text-white">Smooth Curve (half slabs)</div>
+                      <div className="text-[11px] text-zinc-400">
+                        Uses lower/upper slabs to soften the outline.
                       </div>
                     </div>
                   </label>
 
-                  <label className="flex items-start gap-2.5 text-xs text-slate-700 cursor-pointer">
+                  <label className="flex items-start gap-2.5 text-xs text-zinc-300 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={geodesic}
                       onChange={(e) => setGeodesic(e.target.checked)}
-                      className="w-4 h-4 rounded text-blue-600 border-stone-300 mt-0.5 focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] mt-0.5 rounded-xs"
                     />
                     <div>
-                      <div className="font-semibold text-slate-800">Geodesic shell</div>
-                      <div className="text-[11px] text-slate-500">
-                        Samples the dome surface with triangular struts.
+                      <div className="font-bold text-white">Geodesic shell</div>
+                      <div className="text-[11px] text-zinc-400">
+                        Samples the surface with triangular struts.
                       </div>
                     </div>
                   </label>
                 </div>
 
-                {/* Diameter Slider & Input */}
-                <div className="space-y-2 pt-2 border-t border-stone-100">
+                {/* Diameter Slider */}
+                <div className="space-y-2 pt-2 border-t border-[#262e38]">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-slate-800">Diameter: {diameter}</span>
+                    <span className="font-bold text-zinc-200">Diameter: {diameter}</span>
                     <input
                       type="number"
                       min={3}
                       max={maxSliderValue}
                       value={diameter}
                       onChange={(e) => setDiameter(Math.max(3, Math.min(maxSliderValue, Number(e.target.value) || 3)))}
-                      className="w-14 px-2 py-1 text-center font-mono text-xs border border-stone-300 rounded-lg focus:outline-blue-500"
+                      className="w-14 px-2 py-1 text-center font-mono text-xs bg-[#111418] text-emerald-400 border border-[#3b4450] rounded-xs"
                     />
                   </div>
                   <input
@@ -282,21 +275,21 @@ export default function MinecraftShapeGenerator() {
                     max={maxSliderValue}
                     value={diameter}
                     onChange={(e) => setDiameter(Number(e.target.value))}
-                    className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    className="w-full cursor-pointer"
                   />
                 </div>
 
-                {/* Height Slider & Input */}
+                {/* Height Slider */}
                 <div className="space-y-2">
                   <div className="flex items-center justify-between text-xs">
-                    <span className="font-bold text-slate-800">Height: {height}</span>
+                    <span className="font-bold text-zinc-200">Height: {height}</span>
                     <input
                       type="number"
                       min={2}
                       max={maxSliderValue}
                       value={height}
                       onChange={(e) => setHeight(Math.max(2, Math.min(maxSliderValue, Number(e.target.value) || 2)))}
-                      className="w-14 px-2 py-1 text-center font-mono text-xs border border-stone-300 rounded-lg focus:outline-blue-500"
+                      className="w-14 px-2 py-1 text-center font-mono text-xs bg-[#111418] text-emerald-400 border border-[#3b4450] rounded-xs"
                     />
                   </div>
                   <input
@@ -305,43 +298,42 @@ export default function MinecraftShapeGenerator() {
                     max={maxSliderValue}
                     value={height}
                     onChange={(e) => setHeight(Number(e.target.value))}
-                    className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    className="w-full cursor-pointer"
                   />
                 </div>
 
-                {/* Warning / Allow Large Sizes Box */}
-                <div className="p-3.5 rounded-xl bg-[#fff8f0] border border-[#fed7aa] space-y-1.5">
-                  <label className="flex items-start gap-2 text-xs text-[#9a3412] font-semibold cursor-pointer">
+                {/* Large Size Warning Box */}
+                <div className="p-3 rounded-sm bg-[#221c15] border border-[#78350f] space-y-1">
+                  <label className="flex items-start gap-2 text-xs text-[#fde047] font-semibold cursor-pointer">
                     <input
                       type="checkbox"
                       checked={allowLargeSizes}
                       onChange={(e) => setAllowLargeSizes(e.target.checked)}
-                      className="w-4 h-4 text-orange-600 border-orange-300 mt-0.5 rounded focus:ring-orange-500"
+                      className="w-4 h-4 text-amber-500 bg-[#111418] border-amber-600 mt-0.5 rounded-xs"
                     />
-                    <span>Allow sizes above 64 blocks (⚠️ May lag your computer badly while it computes. Give it a second.)</span>
+                    <span>Allow sizes above 64 blocks</span>
                   </label>
-                  <p className="text-[11px] text-[#c2410c] pl-6 leading-relaxed">
-                    Anything bigger than 64 blocks may lag your computer during initial computation.
+                  <p className="text-[11px] text-amber-200/80 pl-6">
+                    Structures &gt; 64 blocks contain thousands of voxels.
                   </p>
                 </div>
 
                 {/* Symmetry Lines Section */}
-                <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-4">
-                  <label className="flex items-center gap-2 text-xs font-bold text-slate-900 cursor-pointer">
+                <div className="p-3.5 rounded-sm bg-[#14181d] border border-[#2d3540] space-y-3">
+                  <label className="flex items-center gap-2 text-xs font-bold text-white cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showSymmetry}
                       onChange={(e) => setShowSymmetry(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 border-stone-300 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] rounded-xs"
                     />
-                    <span>Show Symmetrical Lines</span>
+                    <span>Show Symmetrical Lines (Ribs)</span>
                   </label>
 
                   {showSymmetry && (
-                    <div className="space-y-4 pt-2 border-t border-stone-200">
-                      {/* Line Count */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs text-slate-700 font-medium">
+                    <div className="space-y-3 pt-2 border-t border-[#262e38]">
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-zinc-300">
                           <span>Line Count: {lineCount}</span>
                         </div>
                         <input
@@ -350,14 +342,13 @@ export default function MinecraftShapeGenerator() {
                           max={16}
                           value={lineCount}
                           onChange={(e) => setLineCount(Number(e.target.value))}
-                          className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          className="w-full"
                         />
                       </div>
 
-                      {/* Line Width */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs text-slate-700 font-medium">
-                          <span>Line Width (degrees): {lineWidthDeg}</span>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-zinc-300">
+                          <span>Line Width: {lineWidthDeg}°</span>
                         </div>
                         <input
                           type="range"
@@ -365,13 +356,12 @@ export default function MinecraftShapeGenerator() {
                           max={45}
                           value={lineWidthDeg}
                           onChange={(e) => setLineWidthDeg(Number(e.target.value))}
-                          className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          className="w-full"
                         />
                       </div>
 
-                      {/* Layer Spacing */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs text-slate-700 font-medium">
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-zinc-300">
                           <span>Layer Spacing: {layerSpacing}</span>
                         </div>
                         <input
@@ -380,17 +370,13 @@ export default function MinecraftShapeGenerator() {
                           max={6}
                           value={layerSpacing}
                           onChange={(e) => setLayerSpacing(Number(e.target.value))}
-                          className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          className="w-full"
                         />
-                        <div className="text-[10px] text-slate-500">
-                          Spacing &gt; 1 creates dashed vertical arcs by skipping layers.
-                        </div>
                       </div>
 
-                      {/* Rotation */}
-                      <div className="space-y-1.5">
-                        <div className="flex justify-between text-xs text-slate-700 font-medium">
-                          <span>Rotation (degrees): {rotationDeg}</span>
+                      <div className="space-y-1">
+                        <div className="flex justify-between text-xs text-zinc-300">
+                          <span>Rotation: {rotationDeg}°</span>
                         </div>
                         <input
                           type="range"
@@ -398,7 +384,7 @@ export default function MinecraftShapeGenerator() {
                           max={360}
                           value={rotationDeg}
                           onChange={(e) => setRotationDeg(Number(e.target.value))}
-                          className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                          className="w-full"
                         />
                       </div>
                     </div>
@@ -407,18 +393,17 @@ export default function MinecraftShapeGenerator() {
               </div>
             )}
 
-            {/* TAB 2: LAYERS & ASSISTANT */}
+            {/* TAB 2: LAYERS */}
             {activeTab === 'layers' && (
               <div className="space-y-6">
-                {/* Action Controls */}
                 <div className="space-y-3">
                   <div className="grid grid-cols-2 gap-2">
                     <button
                       onClick={() => toggleMarkBuilt(currentLayer)}
-                      className={`py-2.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                      className={`py-2.5 px-3 rounded-xs text-xs font-bold uppercase tracking-wider transition-all flex items-center justify-center gap-1.5 ${
                         builtLayers.has(currentLayer)
-                          ? 'bg-emerald-700 text-white'
-                          : 'bg-emerald-600 hover:bg-emerald-500 active:bg-emerald-700 text-white shadow-xs'
+                          ? 'mc-button-green'
+                          : 'mc-button'
                       }`}
                     >
                       <Check className="w-3.5 h-3.5" />
@@ -428,29 +413,29 @@ export default function MinecraftShapeGenerator() {
                     <button
                       onClick={handleNextLayer}
                       disabled={currentLayer >= model.height - 1}
-                      className="py-2.5 px-3 rounded-xl text-xs font-bold text-slate-700 bg-stone-100 hover:bg-stone-200 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-1"
+                      className="mc-button-blue py-2.5 px-3 rounded-xs text-xs font-bold uppercase tracking-wider disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-1"
                     >
                       Next Layer <ChevronRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="flex items-center justify-between text-xs pt-1">
+                  <div className="flex items-center justify-between text-xs pt-1 text-zinc-400">
                     <button
                       onClick={handleResetLayers}
-                      className="text-slate-500 hover:text-slate-800 flex items-center gap-1 font-medium transition"
+                      className="hover:text-white flex items-center gap-1 font-medium transition"
                     >
-                      <RotateCcw className="w-3 h-3" /> Reset
+                      <RotateCcw className="w-3 h-3" /> Reset Tracker
                     </button>
-                    <span className="font-bold text-slate-800">
+                    <span className="font-mono font-bold text-emerald-400">
                       Layer {currentLayer + 1} / {model.height}
                     </span>
                   </div>
                 </div>
 
-                {/* Built Layers Checkbox Matrix */}
+                {/* Built Layers Grid */}
                 <div className="space-y-2">
-                  <div className="text-xs font-bold text-slate-800">Built Layers:</div>
-                  <div className="grid grid-cols-3 gap-1.5 max-h-40 overflow-y-auto p-2 bg-stone-50 rounded-xl border border-stone-200">
+                  <div className="text-xs font-bold text-zinc-300">Built Layers:</div>
+                  <div className="grid grid-cols-3 gap-1.5 max-h-40 overflow-y-auto p-2 bg-[#111418] rounded-sm border border-[#2d3540]">
                     {Array.from({ length: model.height }, (_, i) => (
                       <button
                         key={i}
@@ -458,22 +443,22 @@ export default function MinecraftShapeGenerator() {
                           setCurrentLayer(i);
                           toggleMarkBuilt(i);
                         }}
-                        className={`py-1.5 px-2 rounded-lg text-xs font-medium border flex items-center justify-between transition ${
+                        className={`py-1.5 px-2 rounded-xs text-xs font-mono font-bold border flex items-center justify-between transition ${
                           builtLayers.has(i)
-                            ? 'bg-emerald-50 border-emerald-300 text-emerald-800 font-bold'
+                            ? 'bg-[#064e3b] border-emerald-500 text-emerald-300'
                             : i === currentLayer
-                            ? 'bg-blue-50 border-blue-300 text-blue-700'
-                            : 'bg-white border-stone-200 text-slate-600 hover:bg-stone-100'
+                            ? 'bg-[#0369a1] border-sky-400 text-white'
+                            : 'bg-[#181d24] border-[#2d3540] text-zinc-400 hover:bg-[#202730]'
                         }`}
                       >
                         <span>{i + 1}</span>
-                        {builtLayers.has(i) && <Check className="w-3 h-3 text-emerald-600" />}
+                        {builtLayers.has(i) && <Check className="w-3 h-3 text-emerald-400" />}
                       </button>
                     ))}
                   </div>
                 </div>
 
-                {/* Layer Scrubber Slider */}
+                {/* Layer Scrubber */}
                 <div className="space-y-1.5">
                   <input
                     type="range"
@@ -481,73 +466,66 @@ export default function MinecraftShapeGenerator() {
                     max={Math.max(0, model.height - 1)}
                     value={currentLayer}
                     onChange={(e) => setCurrentLayer(Number(e.target.value))}
-                    className="w-full h-1.5 bg-stone-200 rounded-lg appearance-none cursor-pointer accent-blue-600"
+                    className="w-full"
                   />
                 </div>
 
                 {/* Layers & View Sub-Card */}
-                <div className="p-4 rounded-xl bg-stone-50 border border-stone-200 space-y-4">
-                  <div className="text-xs font-bold text-slate-900">Layers &amp; View</div>
+                <div className="p-3.5 rounded-sm bg-[#14181d] border border-[#2d3540] space-y-3">
+                  <div className="text-xs font-bold text-zinc-300">View Settings</div>
 
                   {/* View Mode */}
-                  <div className="space-y-1.5">
-                    <div className="text-[11px] font-semibold text-slate-600">View Mode</div>
-                    <div className="grid grid-cols-3 gap-1 bg-stone-200/80 p-1 rounded-xl">
-                      {[
-                        { id: '3d', label: '3D' },
-                        { id: '2d', label: '2D' },
-                        { id: 'both', label: 'Both' },
-                      ].map((item) => (
-                        <button
-                          key={item.id}
-                          onClick={() => setViewMode(item.id as any)}
-                          className={`py-1 rounded-lg text-xs font-semibold transition ${
-                            viewMode === item.id
-                              ? 'bg-white text-blue-600 shadow-2xs'
-                              : 'text-slate-600 hover:text-slate-900'
-                          }`}
-                        >
-                          {item.label}
-                        </button>
-                      ))}
-                    </div>
+                  <div className="grid grid-cols-3 gap-1 bg-[#111418] p-1 rounded-sm border border-[#2d3540]">
+                    {[
+                      { id: '3d', label: '3D' },
+                      { id: '2d', label: '2D' },
+                      { id: 'both', label: 'Both' },
+                    ].map((item) => (
+                      <button
+                        key={item.id}
+                        onClick={() => setViewMode(item.id as any)}
+                        className={`py-1 rounded-xs text-xs font-bold transition ${
+                          viewMode === item.id
+                            ? 'bg-emerald-600 text-white shadow-xs'
+                            : 'text-zinc-400 hover:text-white'
+                        }`}
+                      >
+                        {item.label}
+                      </button>
+                    ))}
                   </div>
 
                   {/* Color Palette */}
-                  <div className="space-y-1.5">
-                    <div className="text-[11px] font-semibold text-slate-600">Color Palette</div>
-                    <select
-                      value={palette}
-                      onChange={(e) => setPalette(e.target.value)}
-                      className="w-full px-3 py-1.5 bg-white border border-stone-300 rounded-xl text-xs font-medium text-slate-800 focus:outline-blue-500"
-                    >
-                      <option value="okabeIto">Okabe-Ito (Colorblind Accessible)</option>
-                      <option value="classic">Classic Minecraft Wool</option>
-                      <option value="rainbow">Cyber Rainbow</option>
-                      <option value="blueprint">Slate Blueprint</option>
-                    </select>
-                  </div>
+                  <select
+                    value={palette}
+                    onChange={(e) => setPalette(e.target.value)}
+                    className="w-full px-2.5 py-1.5 bg-[#111418] border border-[#3b4450] rounded-xs text-xs text-zinc-200 font-medium focus:outline-emerald-500"
+                  >
+                    <option value="okabeIto">Okabe-Ito (High Contrast)</option>
+                    <option value="minecraftWool">Classic Minecraft Wool</option>
+                    <option value="cyberRainbow">Cyber Rainbow</option>
+                    <option value="slateBlueprint">Slate Blueprint</option>
+                  </select>
 
-                  {/* Onion Skin Checkbox */}
-                  <label className="flex items-center gap-2 text-xs text-slate-700 cursor-pointer">
+                  <label className="flex items-center gap-2 text-xs text-zinc-300 cursor-pointer">
                     <input
                       type="checkbox"
                       checked={showOnionSkin}
                       onChange={(e) => setShowOnionSkin(e.target.checked)}
-                      className="w-4 h-4 text-blue-600 border-stone-300 rounded focus:ring-blue-500"
+                      className="w-4 h-4 text-emerald-500 bg-[#111418] border-[#3b4450] rounded-xs"
                     />
-                    <span>Show Ghost Lower Layer (Onion Skin)</span>
+                    <span>Show Ghost Lower Layer</span>
                   </label>
                 </div>
 
-                {/* Materials Count */}
-                <div className="p-4 rounded-xl bg-blue-50/60 border border-blue-200 space-y-2 text-xs">
-                  <div className="font-bold text-blue-900">Survival Materials:</div>
-                  <div className="grid grid-cols-2 gap-2 text-slate-700">
-                    <div>Total: <span className="font-mono font-bold text-slate-900">{totalBlocks}</span></div>
-                    <div>Stacks: <span className="font-mono font-bold text-slate-900">{stacks64}s + {remainderBlocks}</span></div>
-                    <div>Shulkers: <span className="font-mono font-bold text-slate-900">{shulkerBoxes}</span></div>
-                    <div>Current Layer: <span className="font-mono font-bold text-slate-900">{model.layers.get(currentLayer)?.length || 0}</span></div>
+                {/* Survival Material Summary */}
+                <div className="p-3.5 rounded-sm bg-[#14181d] border border-emerald-900/60 space-y-2 text-xs">
+                  <div className="font-bold text-emerald-400">Survival Block Count:</div>
+                  <div className="grid grid-cols-2 gap-2 text-zinc-300 font-mono">
+                    <div>Total: <span className="font-bold text-white">{totalBlocks}</span></div>
+                    <div>Stacks: <span className="font-bold text-white">{stacks64}s + {remainderBlocks}</span></div>
+                    <div>Shulkers: <span className="font-bold text-white">{shulkerBoxes}</span></div>
+                    <div>This Layer: <span className="font-bold text-white">{model.layers.get(currentLayer)?.length || 0}</span></div>
                   </div>
                 </div>
               </div>
@@ -556,28 +534,28 @@ export default function MinecraftShapeGenerator() {
         </div>
       </div>
 
-      {/* 3. EXPORT MODAL */}
+      {/* EXPORT MODAL */}
       {showExportModal && (
-        <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-xs flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-xl rounded-2xl border border-stone-200 shadow-2xl p-6 space-y-5 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between border-b border-stone-100 pb-3">
-              <h3 className="text-lg font-bold text-slate-900">
-                Export Minecraft Blueprint
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-xs flex items-center justify-center p-4">
+          <div className="bg-[#181d24] w-full max-w-xl rounded-sm border border-[#3b4450] shadow-2xl p-6 space-y-5">
+            <div className="flex items-center justify-between border-b border-[#2d3540] pb-3">
+              <h3 className="text-base font-bold text-white flex items-center gap-2">
+                <span className="text-emerald-400">❖</span> Export Blueprint
               </h3>
               <button
                 onClick={() => setShowExportModal(false)}
-                className="p-1 rounded-lg text-slate-400 hover:text-slate-700 hover:bg-stone-100 transition"
+                className="p-1 text-zinc-400 hover:text-white"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs text-slate-600">
+            <div className="space-y-3 text-xs text-zinc-300">
               <p>
-                <strong>Structure Summary:</strong> {shape.toUpperCase()} • {diameter}x{diameter} Diameter • {height} Height • {totalBlocks} Total Blocks ({stacks64} stacks of 64).
+                <strong>Summary:</strong> {shape.toUpperCase()} • {diameter}x{diameter} Diameter • {height} Height • {totalBlocks} Blocks ({stacks64} stacks of 64).
               </p>
 
-              <div className="p-3 bg-stone-50 rounded-xl border border-stone-200 font-mono text-[11px] max-h-48 overflow-y-auto whitespace-pre">
+              <div className="p-3 bg-[#111418] rounded-xs border border-[#2d3540] font-mono text-[11px] text-emerald-400 max-h-48 overflow-y-auto whitespace-pre">
 {`# Minecraft Dome Blueprint
 Shape: ${shape}
 Diameter: ${diameter}x${diameter}
@@ -598,13 +576,13 @@ ${Array.from({ length: model.height }, (_, i) => `Layer ${i + 1}: ${model.layers
                   setCopiedText(true);
                   setTimeout(() => setCopiedText(false), 2000);
                 }}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-stone-100 hover:bg-stone-200 text-slate-800 transition"
+                className="mc-button px-4 py-2 text-xs font-bold"
               >
-                {copiedText ? 'Copied to Clipboard!' : 'Copy Summary'}
+                {copiedText ? 'Copied!' : 'Copy Summary'}
               </button>
               <button
                 onClick={() => window.print()}
-                className="px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 hover:bg-blue-500 text-white transition flex items-center gap-1.5"
+                className="mc-button-green px-4 py-2 text-xs font-bold flex items-center gap-1.5"
               >
                 <Printer className="w-3.5 h-3.5" /> Print Blueprint
               </button>

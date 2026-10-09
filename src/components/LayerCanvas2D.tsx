@@ -24,7 +24,6 @@ export default function LayerCanvas2D({
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [internalViewAngle, setInternalViewAngle] = useState<ViewAngle>('top');
-  const [hoveredInfo, setHoveredInfo] = useState<string | null>(null);
 
   const viewAngle = activeViewAngle || internalViewAngle;
   const setView = (angle: ViewAngle) => {
@@ -38,7 +37,6 @@ export default function LayerCanvas2D({
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
-    // High-DPI handling
     const rect = canvas.getBoundingClientRect();
     const dpr = window.devicePixelRatio || 1;
     canvas.width = rect.width * dpr;
@@ -48,8 +46,8 @@ export default function LayerCanvas2D({
     const width = rect.width;
     const height = rect.height;
 
-    // 1. Clean Graph Paper Background
-    ctx.fillStyle = '#ffffff';
+    // 1. Dark Blueprint Background
+    ctx.fillStyle = '#14181d';
     ctx.fillRect(0, 0, width, height);
 
     const maxDim = Math.max(model.diameterX, model.diameterZ, model.height) + 4;
@@ -57,27 +55,25 @@ export default function LayerCanvas2D({
     const centerX = width / 2;
     const centerY = height / 2;
 
-    // 2. Crisp Graph Paper Grid Lines
-    ctx.strokeStyle = '#eef2f6';
+    // 2. Dark Grid Lines
+    ctx.strokeStyle = '#1f262f';
     ctx.lineWidth = 1;
 
     const gridExtent = Math.ceil(maxDim / 2) + 4;
     for (let i = -gridExtent; i <= gridExtent; i++) {
-      // Vertical
       ctx.beginPath();
       ctx.moveTo(centerX + i * cellSize, 0);
       ctx.lineTo(centerX + i * cellSize, height);
       ctx.stroke();
 
-      // Horizontal
       ctx.beginPath();
       ctx.moveTo(0, centerY + i * cellSize);
       ctx.lineTo(width, centerY + i * cellSize);
       ctx.stroke();
     }
 
-    // 3. Center Crosshairs (Engineering Blueprints)
-    ctx.strokeStyle = '#cbd5e1';
+    // 3. Center Crosshairs
+    ctx.strokeStyle = '#3b4450';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
     ctx.moveTo(centerX, 0);
@@ -86,7 +82,7 @@ export default function LayerCanvas2D({
     ctx.lineTo(width, centerY);
     ctx.stroke();
 
-    // 4. Extract voxels based on view plane
+    // 4. Draw Voxels
     let currentVoxels: VoxelBlock[] = [];
     let prevVoxels: VoxelBlock[] = [];
 
@@ -96,7 +92,6 @@ export default function LayerCanvas2D({
         prevVoxels = model.layers.get(currentLayer - 1) || [];
       }
     } else {
-      // Side profile projections
       currentVoxels = model.voxels;
     }
 
@@ -105,23 +100,21 @@ export default function LayerCanvas2D({
       const py = centerY + y * cellSize - cellSize / 2;
 
       if (isGhost) {
-        ctx.fillStyle = 'rgba(148, 163, 184, 0.28)';
+        ctx.fillStyle = 'rgba(75, 85, 99, 0.4)';
         ctx.fillRect(px + 1, py + 1, cellSize - 2, cellSize - 2);
-        ctx.strokeStyle = 'rgba(100, 116, 139, 0.4)';
+        ctx.strokeStyle = 'rgba(107, 114, 128, 0.6)';
         ctx.lineWidth = 1;
         ctx.strokeRect(px + 0.5, py + 0.5, cellSize - 1, cellSize - 1);
       } else {
         ctx.fillStyle = color;
         ctx.fillRect(px + 0.5, py + 0.5, cellSize - 1, cellSize - 1);
 
-        // Crisp block border
-        ctx.strokeStyle = 'rgba(0, 0, 0, 0.18)';
+        ctx.strokeStyle = 'rgba(0, 0, 0, 0.35)';
         ctx.lineWidth = 1;
         ctx.strokeRect(px + 0.5, py + 0.5, cellSize - 1, cellSize - 1);
 
-        // If half slab, draw cross/diagonal
         if (isHalfSlab) {
-          ctx.strokeStyle = '#22c55e';
+          ctx.strokeStyle = '#34d399';
           ctx.lineWidth = 1.5;
           ctx.beginPath();
           ctx.moveTo(px + 2, py + 2);
@@ -133,14 +126,12 @@ export default function LayerCanvas2D({
       }
     };
 
-    // Draw Previous Layer Ghost First
     if (viewAngle === 'top' && showOnionSkin) {
       prevVoxels.forEach((v) => {
         drawBlock(v.x, -v.z, v.color, true);
       });
     }
 
-    // Draw Current Layer Voxels
     currentVoxels.forEach((v) => {
       if (viewAngle === 'top') {
         drawBlock(v.x, -v.z, v.color, false, v.isHalfSlab);
@@ -157,15 +148,15 @@ export default function LayerCanvas2D({
   }, [model, currentLayer, viewAngle, showOnionSkin, colorCurrentLayerOnly]);
 
   return (
-    <div className="relative w-full h-full min-h-[460px] bg-white rounded-2xl border border-stone-200/90 shadow-xs overflow-hidden flex flex-col">
+    <div className="relative w-full h-full min-h-[460px] bg-[#14181d] rounded-xl border border-[#2d3540] overflow-hidden flex flex-col shadow-inner">
       {/* 2D View Top Control Bar */}
-      <div className="p-3.5 bg-stone-50/80 border-b border-stone-200 flex flex-wrap items-center justify-between gap-2">
-        <div className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
-          <span>2D View Settings</span>
+      <div className="p-3 bg-[#181d24] border-b border-[#2d3540] flex flex-wrap items-center justify-between gap-2">
+        <div className="text-xs font-bold text-zinc-300 flex items-center gap-1.5">
+          <span className="text-emerald-400">❖</span> 2D Slicer
         </div>
 
-        {/* View Angle Pill Toggles */}
-        <div className="flex items-center gap-1 bg-stone-200/70 p-1 rounded-xl">
+        {/* View Angle Toggles */}
+        <div className="flex items-center gap-1 bg-[#111418] p-1 rounded-sm border border-[#2d3540]">
           {[
             { id: 'top', label: 'Top' },
             { id: 'right', label: 'Right (+X)' },
@@ -176,10 +167,10 @@ export default function LayerCanvas2D({
             <button
               key={item.id}
               onClick={() => setView(item.id as ViewAngle)}
-              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-all ${
+              className={`px-2.5 py-1 rounded-xs text-xs font-bold transition-all ${
                 viewAngle === item.id
-                  ? 'bg-blue-600 text-white shadow-xs'
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-white/60'
+                  ? 'bg-emerald-600 text-white border-t border-emerald-400 shadow-xs'
+                  : 'text-zinc-400 hover:text-white hover:bg-[#21272e]'
               }`}
             >
               {item.label}
@@ -189,21 +180,21 @@ export default function LayerCanvas2D({
       </div>
 
       {/* Legend Badge */}
-      <div className="px-4 py-1.5 bg-white border-b border-stone-100 flex items-center gap-4 text-[11px] text-slate-500">
+      <div className="px-4 py-1.5 bg-[#161a20] border-b border-[#21272e] flex items-center gap-4 text-[11px] text-zinc-400">
         <span className="flex items-center gap-1.5">
           <span className="w-2.5 h-2.5 rounded-xs bg-emerald-500 inline-block"></span>
-          <span>Active layer block</span>
+          <span>Layer Block</span>
         </span>
         {showOnionSkin && (
           <span className="flex items-center gap-1.5">
-            <span className="w-2.5 h-2.5 rounded-xs bg-slate-300 inline-block"></span>
-            <span>Ghost (previous layer)</span>
+            <span className="w-2.5 h-2.5 rounded-xs bg-zinc-600 inline-block"></span>
+            <span>Ghost (Lower Layer)</span>
           </span>
         )}
       </div>
 
       {/* Canvas */}
-      <div className="relative flex-1 w-full h-full min-h-[360px] flex items-center justify-center p-2 bg-white">
+      <div className="relative flex-1 w-full h-full min-h-[360px] flex items-center justify-center p-2 bg-[#14181d]">
         <canvas ref={canvasRef} className="w-full h-full block" />
       </div>
     </div>

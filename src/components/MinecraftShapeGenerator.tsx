@@ -107,7 +107,11 @@ export default function MinecraftShapeGenerator() {
   const shulkerBoxes = (totalBlocks / (64 * 27)).toFixed(1);
 
   return (
-    <div className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6">
+    <div
+      className={`w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-6 space-y-6 transition-colors ${
+        isDark ? 'text-white' : 'text-slate-900'
+      }`}
+    >
       {/* Top Title Banner */}
       <div
         className={`flex flex-col md:flex-row items-start md:items-center justify-between gap-4 pb-4 border-b transition-colors ${
@@ -120,10 +124,10 @@ export default function MinecraftShapeGenerator() {
               isDark ? 'text-white' : 'text-slate-900'
             }`}
           >
-            <span className="text-emerald-500">❖</span> Minecraft Shape Generator
+            <span className="text-emerald-500">❖</span> Minecraft Dome Generator
           </h1>
-          <p className={`text-xs sm:text-sm mt-1 ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
-            Build perfect hollow domes, spheres, and roofs with 3D orbit inspection and 2D movable layer slicer.
+          <p className={`text-xs sm:text-sm mt-1 ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+            Free 3D &amp; 2D voxel shape generator for Minecraft dome roofs, spheres, circles, and cones with layer-by-layer blueprints.
           </p>
         </div>
 
@@ -174,13 +178,13 @@ export default function MinecraftShapeGenerator() {
           className={`lg:col-span-4 w-full rounded-xl border overflow-hidden flex flex-col transition-colors ${
             isDark
               ? 'bg-[#181d24] border-[#2d3540] shadow-xl'
-              : 'bg-white border-stone-200 shadow-md'
+              : 'bg-white border-stone-200 shadow-sm'
           }`}
         >
           {/* TAB HEADER */}
           <div
             className={`grid grid-cols-2 border-b p-1.5 gap-1.5 transition-colors ${
-              isDark ? 'border-[#2d3540] bg-[#14181d]' : 'border-stone-200 bg-stone-100'
+              isDark ? 'border-[#2d3540] bg-[#14181d]' : 'border-stone-200 bg-stone-50'
             }`}
           >
             <button
@@ -189,7 +193,7 @@ export default function MinecraftShapeGenerator() {
                 activeTab === 'shape'
                   ? isDark
                     ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
-                    : 'bg-white text-emerald-600 border-t-2 border-emerald-500 shadow-xs'
+                    : 'bg-white text-emerald-700 border-t-2 border-emerald-500 shadow-xs'
                   : isDark
                   ? 'text-zinc-400 hover:text-white'
                   : 'text-slate-600 hover:text-slate-900'
@@ -203,7 +207,7 @@ export default function MinecraftShapeGenerator() {
                 activeTab === 'layers'
                   ? isDark
                     ? 'bg-[#262e38] text-emerald-400 border-t-2 border-emerald-400 shadow-xs'
-                    : 'bg-white text-emerald-600 border-t-2 border-emerald-500 shadow-xs'
+                    : 'bg-white text-emerald-700 border-t-2 border-emerald-500 shadow-xs'
                   : isDark
                   ? 'text-zinc-400 hover:text-white'
                   : 'text-slate-600 hover:text-slate-900'
@@ -220,7 +224,7 @@ export default function MinecraftShapeGenerator() {
               <div className="space-y-6">
                 {/* Shape Selection */}
                 <div className="space-y-3">
-                  <div className={`text-[11px] font-bold uppercase tracking-wider ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
+                  <div className={`text-[11px] font-bold uppercase tracking-wider ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
                     Base Primitive
                   </div>
 
@@ -272,8 +276,8 @@ export default function MinecraftShapeGenerator() {
                       <div className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         Smooth Curve (half slabs)
                       </div>
-                      <div className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
-                        Uses lower/upper slabs to soften the outline.
+                      <div className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
+                        Uses lower/upper slabs to soften the dome &amp; cone outline.
                       </div>
                     </div>
                   </label>
@@ -289,7 +293,7 @@ export default function MinecraftShapeGenerator() {
                       <div className={`font-bold ${isDark ? 'text-white' : 'text-slate-900'}`}>
                         Geodesic shell
                       </div>
-                      <div className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-slate-500'}`}>
+                      <div className={`text-[11px] ${isDark ? 'text-zinc-400' : 'text-slate-600'}`}>
                         Samples the surface with triangular struts.
                       </div>
                     </div>
@@ -350,7 +354,7 @@ export default function MinecraftShapeGenerator() {
                   />
                 </div>
 
-                {/* Warning Box */}
+                {/* Large Size Warning Box */}
                 <div
                   className={`p-3 rounded-sm border space-y-1 ${
                     isDark ? 'bg-[#221c15] border-[#78350f]' : 'bg-amber-50 border-amber-200'

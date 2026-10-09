@@ -26,6 +26,7 @@ export default function LayerCanvas2D({
 }: Props) {
   const { theme } = useTheme();
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const [internalViewAngle, setInternalViewAngle] = useState<ViewAngle>('top');
 
   // Interactive Pan and Zoom State
@@ -40,7 +41,6 @@ export default function LayerCanvas2D({
     else setInternalViewAngle(angle);
   };
 
-  // Reset Pan/Zoom on view angle or dimension change
   const handleResetPanZoom = () => {
     setPan({ x: 0, y: 0 });
     setZoom(1.0);
@@ -49,6 +49,24 @@ export default function LayerCanvas2D({
   useEffect(() => {
     handleResetPanZoom();
   }, [viewAngle, model.diameterX, model.diameterZ, model.height]);
+
+  // Non-passive wheel event listener to completely isolate canvas zooming from page scroll
+  useEffect(() => {
+    const container = viewportRef.current;
+    if (!container) return;
+
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const factor = e.deltaY < 0 ? 1.15 : 0.87;
+      setZoom((prev) => Math.max(0.3, Math.min(6.0, prev * factor)));
+    };
+
+    container.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      container.removeEventListener('wheel', onWheel);
+    };
+  }, []);
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -74,7 +92,6 @@ export default function LayerCanvas2D({
     const baseCellSize = Math.max(5, Math.min(26, Math.floor((Math.min(width, height) - 40) / maxDim)));
     const cellSize = baseCellSize * zoom;
 
-    // Center point with user pan offset
     const centerX = width / 2 + pan.x;
     const centerY = height / 2 + pan.y;
 
@@ -82,7 +99,7 @@ export default function LayerCanvas2D({
     ctx.strokeStyle = isDark ? '#1f262f' : '#eef2f6';
     ctx.lineWidth = 1;
 
-    const gridExtent = Math.ceil((maxDim * 2) / zoom) + 10;
+    const gridExtent = Math.ceil((maxDim * 2) / zoom) + 12;
     for (let i = -gridExtent; i <= gridExtent; i++) {
       ctx.beginPath();
       ctx.moveTo(centerX + i * cellSize, 0);
@@ -122,7 +139,6 @@ export default function LayerCanvas2D({
       const px = centerX + x * cellSize - cellSize / 2;
       const py = centerY + y * cellSize - cellSize / 2;
 
-      // Skip off-screen rendering
       if (px + cellSize < 0 || px > width || py + cellSize < 0 || py > height) return;
 
       if (isGhost) {
@@ -173,7 +189,7 @@ export default function LayerCanvas2D({
     });
   }, [model, currentLayer, viewAngle, showOnionSkin, colorCurrentLayerOnly, theme, pan, zoom]);
 
-  // Pan & Zoom Event Handlers
+  // Pan Event Handlers
   const handlePointerDown = (e: React.PointerEvent) => {
     isDraggingRef.current = true;
     dragStartRef.current = { x: e.clientX - pan.x, y: e.clientY - pan.y };
@@ -193,12 +209,6 @@ export default function LayerCanvas2D({
     try {
       (e.target as HTMLElement).releasePointerCapture(e.pointerId);
     } catch {}
-  };
-
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    const factor = e.deltaY < 0 ? 1.15 : 0.87;
-    setZoom((prev) => Math.max(0.4, Math.min(5.0, prev * factor)));
   };
 
   const isDark = theme === 'dark';
@@ -276,7 +286,7 @@ export default function LayerCanvas2D({
             <ZoomIn className="w-3.5 h-3.5" />
           </button>
           <button
-            onClick={() => setZoom((z) => Math.max(0.4, z / 1.2))}
+            onClick={() => setZoom((z) => Math.max(0.3, z / 1.2))}
             className={`p-1 rounded-xs border transition ${
               isDark ? 'bg-[#111418] border-[#2d3540] text-zinc-300 hover:text-white' : 'bg-white border-stone-300 text-slate-700 hover:bg-stone-100'
             }`}
@@ -296,24 +306,24 @@ export default function LayerCanvas2D({
         </div>
       </div>
 
-      {/* Interactive Canvas Viewport (Draggable + Zoomable) */}
+      {/* Interactive Canvas Viewport (Draggable + Isolated Zoom) */}
       <div
+        ref={viewportRef}
         onPointerDown={handlePointerDown}
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        onWheel={handleWheel}
         className="relative flex-1 w-full h-full min-h-[360px] flex items-center justify-center cursor-grab active:cursor-grabbing select-none touch-none overflow-hidden"
       >
         <canvas ref={canvasRef} className="w-full h-full block" />
 
-        {/* Movable Helper Badge */}
+        {/* Helper Badge */}
         <div
           className={`absolute bottom-3 left-3 px-2.5 py-1 rounded-xs border text-[10px] font-medium pointer-events-none ${
             isDark ? 'bg-[#1c2229]/90 border-[#3b4450] text-zinc-300' : 'bg-white/90 border-stone-300 text-slate-600'
           }`}
         >
-          Drag to pan 2D view • Scroll to zoom ({(zoom * 100).toFixed(0)}%)
+          Drag to pan • Scroll to zoom ({(zoom * 100).toFixed(0)}%)
         </div>
       </div>
     </div>
